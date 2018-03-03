@@ -44,10 +44,10 @@ namespace PictureSuperMix
             };
             */
 
-        int boardheight = 10;
-        int boardwidth = 100;
+        int boardheight = 1000;
+        int boardwidth = 20;
 
-        double[,] board_adj = new double[10,100];
+        double[,] board_adj = new double[10,1000];
         Bitmap bmpLeft;
         Bitmap bmpRight;
 
@@ -100,24 +100,6 @@ namespace PictureSuperMix
                         // for each pixel
                         for (int x = 0; x < width; x++, p += pixelSize)
                         {
-                            /*
-                            int r = (int)p[RGB.R]; //Red pixel value
-                            int g = (int)p[RGB.G]; //Green pixel value
-                            int b = (int)p[RGB.B]; //Blue pixel value
-
-                            double change_rate = 0.1;
-                            while (change_rate < 1)
-                            {
-                                if (x < (width * change_rate))
-                                {
-                                    p[RGB.R] = (byte)(r * (1.1-change_rate));
-                                    p[RGB.G] = (byte)(g * (1.1- change_rate));
-                                    p[RGB.B] = (byte)(b * (1.1- change_rate));
-                                    break;
-                                }
-                                change_rate += 0.1;
-                            }
-                            */
 
                             int r = (int)p[RGB.R]; //Red pixel value
                             int g = (int)p[RGB.G]; //Green pixel value
@@ -127,9 +109,9 @@ namespace PictureSuperMix
                             int cur_ratex = (int)(x / xlevel);
                             int cur_ratey = (int)(y / ylevel);
 
-                            p[RGB.R] = (byte)(r * board_adj[cur_ratey, cur_ratex] / 100);
-                            p[RGB.G] = (byte)(g * board_adj[cur_ratey, cur_ratex] / 100);
-                            p[RGB.B] = (byte)(b * board_adj[cur_ratey, cur_ratex] / 100);
+                            p[RGB.R] = (byte)(r * board_adj[cur_ratey, cur_ratex] / 1000);
+                            p[RGB.G] = (byte)(g * board_adj[cur_ratey, cur_ratex] / 1000);
+                            p[RGB.B] = (byte)(b * board_adj[cur_ratey, cur_ratex] / 1000);
                         }
                     }
 
@@ -175,9 +157,9 @@ namespace PictureSuperMix
                             int cur_ratex = (int)(x / xlevel);
                             int cur_ratey = (int)(y / ylevel);
 
-                            p[RGB.R] = (byte)(r * board_adj[cur_ratey, xall-cur_ratex-1] / 100);
-                            p[RGB.G] = (byte)(g * board_adj[cur_ratey, xall-cur_ratex-1] / 100);
-                            p[RGB.B] = (byte)(b * board_adj[cur_ratey, xall-cur_ratex-1] / 100);
+                            p[RGB.R] = (byte)(r * board_adj[cur_ratey, xall-cur_ratex-1] / 1000);
+                            p[RGB.G] = (byte)(g * board_adj[cur_ratey, xall-cur_ratex-1] / 1000);
+                            p[RGB.B] = (byte)(b * board_adj[cur_ratey, xall-cur_ratex-1] / 1000);
 
                         }
                     }
@@ -320,9 +302,9 @@ namespace PictureSuperMix
             for (int i = 0; i < y; i++)
             {
                 for (int ii = 0; ii < x; ii++)
-                    board_adj[i, ii] =100-(100/x)*ii;
+                    board_adj[i, ii] =1000-((double)ii/ (double)x)*1000;
             }
-
+            int zzz = 1;
         }
 
         private void button4_Click(object sender, EventArgs e)

@@ -44,7 +44,7 @@
             this.pictureBox1.Image = null;
             this.pictureBox1.Location = new System.Drawing.Point(12, 31);
             this.pictureBox1.Name = "pictureBox1";
-            this.pictureBox1.Size = new System.Drawing.Size(500, 200);
+            this.pictureBox1.Size = new System.Drawing.Size(497, 206);
             this.pictureBox1.SizeMode = System.Windows.Forms.PictureBoxSizeMode.StretchImage;
             this.pictureBox1.TabIndex = 0;
             this.pictureBox1.TabStop = false;
@@ -92,7 +92,7 @@
             // textBox1
             // 
             this.textBox1.Font = new System.Drawing.Font("宋体", 12F);
-            this.textBox1.Location = new System.Drawing.Point(227, 281);
+            this.textBox1.Location = new System.Drawing.Point(214, 281);
             this.textBox1.Name = "textBox1";
             this.textBox1.Size = new System.Drawing.Size(103, 26);
             this.textBox1.TabIndex = 5;
@@ -102,9 +102,9 @@
             // pictureBox2
             // 
             this.pictureBox2.Image = null;
-            this.pictureBox2.Location = new System.Drawing.Point(518, 31);
+            this.pictureBox2.Location = new System.Drawing.Point(529, 31);
             this.pictureBox2.Name = "pictureBox2";
-            this.pictureBox2.Size = new System.Drawing.Size(500, 200);
+            this.pictureBox2.Size = new System.Drawing.Size(497, 206);
             this.pictureBox2.SizeMode = System.Windows.Forms.PictureBoxSizeMode.StretchImage;
             this.pictureBox2.TabIndex = 6;
             this.pictureBox2.TabStop = false;
@@ -113,7 +113,7 @@
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 12F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(1159, 621);
+            this.ClientSize = new System.Drawing.Size(1038, 596);
             this.Controls.Add(this.pictureBox2);
             this.Controls.Add(this.textBox1);
             this.Controls.Add(this.button4);

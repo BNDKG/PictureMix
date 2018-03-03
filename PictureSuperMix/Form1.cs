@@ -43,38 +43,56 @@ namespace PictureSuperMix
                 { 1,2,3,4,5,6,7,8,9,10 }
             };
             */
+
+        int boardheight = 10;
+        int boardwidth = 100;
+
         double[,] board_adj = new double[10,100];
+        Bitmap bmpLeft;
+        Bitmap bmpRight;
+
+        Bitmap bmpLeftChange;
+        Bitmap bmpRightChange;
+
+        string OriPath;
+
+        string SourcePath;
+        string SavePathLeft;
+        string SavePathRight;
+        string SavePathLeft2;
+        string SavePathRight2;
 
         private void button1_Click(object sender, EventArgs e)
         {
-            string str2 = System.IO.Directory.GetCurrentDirectory();
 
 
-            string zzzz = str2 + "\\Left.bmp";
+            Bitmap bitmapleft2 = bmpLeft.Clone(new Rectangle(0, 0, bmpLeft.Width, bmpLeft.Height), bmpLeft.PixelFormat);
+            Bitmap bitmapRight2 = bmpRight.Clone(new Rectangle(0, 0, bmpRight.Width, bmpRight.Height), bmpRight.PixelFormat);
+            
+            
+            BitmapData imageDataLeft = bitmapleft2.LockBits(new Rectangle(0, 0, bitmapleft2.Width, bitmapleft2.Height),
+            ImageLockMode.ReadOnly, bitmapleft2.PixelFormat);
+            BitmapData imageDataRight = bitmapRight2.LockBits(new Rectangle(0, 0, bitmapRight2.Width, bitmapRight2.Height),
+            ImageLockMode.ReadOnly, bitmapRight2.PixelFormat);
 
-
-            Image img2 = Image.FromFile(zzzz);
-
-
-            Bitmap  bmp= new Bitmap(img2);
-
-            BitmapData imageData = bmp.LockBits(new Rectangle(0, 0, bmp.Width, bmp.Height),
-            ImageLockMode.ReadOnly, bmp.PixelFormat);
-
-
-
-
+            //###########################left###########################//
             unsafe
             {
                 //Count red and black pixels
                 try
                 {
-                    UnmanagedImage img = new UnmanagedImage(imageData);
+                    UnmanagedImage img = new UnmanagedImage(imageDataLeft);
 
                     int height = img.Height;
                     int width = img.Width;
                     int pixelSize = (img.PixelFormat == PixelFormat.Format24bppRgb) ? 3 : 4;
                     byte* p = (byte*)img.ImageData.ToPointer();
+
+                    double ylevel = ((double)img.Height) / board_adj.GetLength(0);
+                    double xlevel = ((double)img.Width) / board_adj.GetLength(1);
+
+                    int yall = board_adj.GetLength(0);
+                    int xall = board_adj.GetLength(1);
 
                     // for each line
                     for (int y = 0; y < height; y++)
@@ -82,38 +100,11 @@ namespace PictureSuperMix
                         // for each pixel
                         for (int x = 0; x < width; x++, p += pixelSize)
                         {
+                            /*
                             int r = (int)p[RGB.R]; //Red pixel value
                             int g = (int)p[RGB.G]; //Green pixel value
                             int b = (int)p[RGB.B]; //Blue pixel value
-                            /*
-                            if (r > g + b) //If red component is bigger then total of green and blue component
-                                totalRed++;  //then its red
 
-                            if (r <= g + b && r < 50 && g < 50 && b < 50) //If all components less 50
-                                totalBlack++; //then its black
-
-                            if(x> (width * 0.8))
-                            {
-                                p[RGB.R] = (byte)(r * (1-(x - 0.8 * width) / (0.2 * width)));
-                                p[RGB.G]= (byte)(g * (1 - (x - 0.8 * width) / (0.2 * width)));
-                                p[RGB.B]= (byte)(b * (1 - (x - 0.8 * width) / (0.2 * width)));
-                            }
-                            if (x < (width * 0.2))
-                            {
-                                p[RGB.R] = (byte)(r * (1 - (0.2 * width-x) / (0.2 * width)));
-                                p[RGB.G] = (byte)(g * (1 - (0.2 * width - x) / (0.2 * width)));
-                                p[RGB.B] = (byte)(b * (1 - (0.2 * width-x) / (0.2 * width)));
-                            }
-                            */
-
-                            /*
-                            if (x > (width * 0.5))
-                            {
-                                p[RGB.R] = (byte)(r * (Math.Asin(((width - x) / (0.5 * width))) / (Math.PI / 2)));
-                                p[RGB.G] = (byte)(g * (Math.Asin(((width - x) / (0.5 * width))) / (Math.PI / 2)));
-                                p[RGB.B] = (byte)(b * (Math.Asin(((width - x) / (0.5 * width))) / (Math.PI / 2)));
-                            }
-                            */
                             double change_rate = 0.1;
                             while (change_rate < 1)
                             {
@@ -126,7 +117,67 @@ namespace PictureSuperMix
                                 }
                                 change_rate += 0.1;
                             }
+                            */
 
+                            int r = (int)p[RGB.R]; //Red pixel value
+                            int g = (int)p[RGB.G]; //Green pixel value
+                            int b = (int)p[RGB.B]; //Blue pixel value
+
+
+                            int cur_ratex = (int)(x / xlevel);
+                            int cur_ratey = (int)(y / ylevel);
+
+                            p[RGB.R] = (byte)(r * board_adj[cur_ratey, cur_ratex] / 100);
+                            p[RGB.G] = (byte)(g * board_adj[cur_ratey, cur_ratex] / 100);
+                            p[RGB.B] = (byte)(b * board_adj[cur_ratey, cur_ratex] / 100);
+                        }
+                    }
+
+                }
+                finally
+                {
+                    bitmapleft2.UnlockBits(imageDataLeft); //Unlock
+                }
+
+            }
+
+
+            //###########################right###########################//
+            unsafe
+            {
+                //Count red and black pixels
+                try
+                {
+                    UnmanagedImage img = new UnmanagedImage(imageDataRight);
+
+                    int height = img.Height;
+                    int width = img.Width;
+                    int pixelSize = (img.PixelFormat == PixelFormat.Format24bppRgb) ? 3 : 4;
+                    byte* p = (byte*)img.ImageData.ToPointer();
+
+                    double ylevel = ((double)img.Height) / board_adj.GetLength(0);
+                    double xlevel = ((double)img.Width) / board_adj.GetLength(1);
+
+                    int yall = board_adj.GetLength(0);
+                    int xall = board_adj.GetLength(1);
+
+                    // for each line
+                    for (int y = 0; y < height; y++)
+                    {
+                        // for each pixel
+                        for (int x = 0; x < width; x++, p += pixelSize)
+                        {
+                            int r = (int)p[RGB.R]; //Red pixel value
+                            int g = (int)p[RGB.G]; //Green pixel value
+                            int b = (int)p[RGB.B]; //Blue pixel value
+
+
+                            int cur_ratex = (int)(x / xlevel);
+                            int cur_ratey = (int)(y / ylevel);
+
+                            p[RGB.R] = (byte)(r * board_adj[cur_ratey, xall-cur_ratex-1] / 100);
+                            p[RGB.G] = (byte)(g * board_adj[cur_ratey, xall-cur_ratex-1] / 100);
+                            p[RGB.B] = (byte)(b * board_adj[cur_ratey, xall-cur_ratex-1] / 100);
 
                         }
                     }
@@ -134,32 +185,26 @@ namespace PictureSuperMix
                 }
                 finally
                 {
-                    bmp.UnlockBits(imageData); //Unlock
+                    bitmapRight2.UnlockBits(imageDataRight); //Unlock
                 }
 
             }
 
-            string zzzz2 = str2 + "\\LeftOutput.bmp";
-            bmp.Save(zzzz2, System.Drawing.Imaging.ImageFormat.Bmp);
+            bitmapleft2.Save(SavePathLeft2, System.Drawing.Imaging.ImageFormat.Bmp);
+            bitmapRight2.Save(SavePathRight2, System.Drawing.Imaging.ImageFormat.Bmp);
 
-            int zzz = 1;
-            zzz++;
 
+
+            pictureBox1.Image = bitmapleft2;
+            pictureBox2.Image = bitmapRight2;
 
         }
 
         private void button2_Click(object sender, EventArgs e)
         {
-            string str2 = System.IO.Directory.GetCurrentDirectory();
 
 
-            string zzzz = str2 + "\\Right.bmp";
-
-
-            Image img2 = Image.FromFile(zzzz);
-
-
-            Bitmap bmp = new Bitmap(img2);
+            Bitmap bmp = bmpLeftChange;
 
             BitmapData imageData = bmp.LockBits(new Rectangle(0, 0, bmp.Width, bmp.Height),
             ImageLockMode.ReadOnly, bmp.PixelFormat);
@@ -224,9 +269,8 @@ namespace PictureSuperMix
 
             }
 
-            string zzz2 = str2 + "\\RightOutput.bmp";
 
-            bmp.Save(zzz2, System.Drawing.Imaging.ImageFormat.Bmp);
+            bmp.Save(SavePathRight, System.Drawing.Imaging.ImageFormat.Bmp);
 
             int zzz = 1;
             zzz++;
@@ -234,110 +278,42 @@ namespace PictureSuperMix
 
         private void button3_Click(object sender, EventArgs e)
         {
-            string str2 = System.IO.Directory.GetCurrentDirectory();
 
 
-            string zzz = str2 + "\\SourcePic.jpg";
+            Bitmap bmpBase = new Bitmap(Image.FromFile(SourcePath));
 
 
-            Image img2 = Image.FromFile(zzz);
-
-            Bitmap bmpBase = new Bitmap(img2);
-            /*
-            BitmapData imageData = bmpBase.LockBits(new Rectangle(0, 0, bmpBase.Width, bmpBase.Height),
-            ImageLockMode.ReadOnly, bmpBase.PixelFormat);
-
-            unsafe
-            {
-                //Count red and black pixels
-                try
-                {
-                    UnmanagedImage img = new UnmanagedImage(imageData);
-
-                    int height = img.Height;
-                    int width = img.Width;
-                    int pixelSize = (img.PixelFormat == PixelFormat.Format24bppRgb) ? 3 : 4;
-                    byte* p = (byte*)img.ImageData.ToPointer();
-
-                    // for each line
-                    for (int y = 0; y < height; y++)
-                    {
-                        // for each pixel
-                        for (int x = 0; x < width; x++, p += pixelSize)
-                        {
-                            //int r = (int)p[RGB.R]; //Red pixel value
-                            //int g = (int)p[RGB.G]; //Green pixel value
-                            // int b = (int)p[RGB.B]; //Blue pixel value
-
-
-                            
-                            if (y < (height * 0.2))
-                            {
-                                p[RGB.R] = (byte)(255);
-                                p[RGB.G] = (byte)(0);
-                                p[RGB.B] = (byte)(0);
-
-                            }
-                            else if(y < (height * 0.4))
-                            {
-                                p[RGB.R] = (byte)(0);
-                                p[RGB.G] = (byte)(255);
-                                p[RGB.B] = (byte)(0);
-                            }
-                            else if (y < (height * 0.6))
-                            {
-                                p[RGB.R] = (byte)(0);
-                                p[RGB.G] = (byte)(0);
-                                p[RGB.B] = (byte)(255);
-                            }
-                            else if (y < (height * 0.8))
-                            {
-                                p[RGB.R] = (byte)(0);
-                                p[RGB.G] = (byte)(0);
-                                p[RGB.B] = (byte)(0);
-                            }
-
-
-                        }
-                    }
-
-                }
-                finally
-                {
-                    bmpBase.UnlockBits(imageData); //Unlock
-                }
-
-            }
-
-
-            bmpBase.Save("C:\\AA2.bmp", System.Drawing.Imaging.ImageFormat.Bmp);
-
-*/
-
-
-
-            double zmc = 0.90909091;
+            double zmc = Convert.ToDouble(textBox1.Text);
             int xx = (int)(bmpBase.Width * zmc);
             int xxx = (int)(bmpBase.Width * (1- zmc));
             int yy = bmpBase.Height;
 
             Rectangle rect = new Rectangle(0, 0, xx, yy);
-            Bitmap bmpNew = bmpBase.Clone(rect, bmpBase.PixelFormat);
+            bmpLeft = bmpBase.Clone(rect, bmpBase.PixelFormat);
 
+            bmpLeft.Save(SavePathLeft, System.Drawing.Imaging.ImageFormat.Bmp);
 
-            string zzz2 = str2 + "\\Left.bmp";
-            bmpNew.Save(zzz2, System.Drawing.Imaging.ImageFormat.Bmp);
 
             Rectangle rect2 = new Rectangle(xxx, 0, xx, yy);
-            Bitmap bmpNew2 = bmpBase.Clone(rect2, bmpBase.PixelFormat);
+            bmpRight = bmpBase.Clone(rect2, bmpBase.PixelFormat);
+
+            bmpRight.Save(SavePathRight, System.Drawing.Imaging.ImageFormat.Bmp);
 
 
-            zzz2 = str2 + "\\Right.bmp";
-            bmpNew2.Save(zzz2, System.Drawing.Imaging.ImageFormat.Bmp);
+            Pic_display();
+
         }
 
         private void Form1_Load(object sender, EventArgs e)
         {
+            OriPath = System.IO.Directory.GetCurrentDirectory();
+
+            SourcePath = OriPath + "\\SourcePic.png";
+            SavePathLeft = OriPath + "\\Left.bmp";
+            SavePathRight = OriPath + "\\Right.bmp";
+            SavePathLeft2 = OriPath + "\\Left2.bmp";
+            SavePathRight2 = OriPath + "\\Right2.bmp";
+
             int x = board_adj.GetLength(1);
             int y = board_adj.GetLength(0);
 
@@ -351,8 +327,6 @@ namespace PictureSuperMix
 
         private void button4_Click(object sender, EventArgs e)
         {
-
-
 
 
             int y = board_adj.GetLength(0);
@@ -370,5 +344,21 @@ namespace PictureSuperMix
 
 
         }
+
+        private void textBox1_TextChanged(object sender, EventArgs e)
+        {
+
+        }
+        private void Pic_display()
+        {
+
+            pictureBox1.Image = bmpLeft;
+            pictureBox2.Image = bmpRight;
+
+
+
+        }
+
+
     }
 }

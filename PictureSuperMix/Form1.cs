@@ -237,7 +237,8 @@ namespace PictureSuperMix
             {
                 for (int ii = 0; ii < x; ii++)
                     board_adj[i, ii] =1000-((double)ii/ (double)x)*1000;
-            }
+            }            
+
             int zzz = 1;
         }
 
@@ -302,6 +303,42 @@ namespace PictureSuperMix
         private void textBox2_TextChanged(object sender, EventArgs e)
         {
 
+        }
+
+        private void button5_Click(object sender, EventArgs e)
+        {
+
+            pictureBox1.Dock = System.Windows.Forms.DockStyle.Fill;
+            ActiveForm.FormBorderStyle = System.Windows.Forms.FormBorderStyle.None;
+
+            pictureBox1.Dock = System.Windows.Forms.DockStyle.None;
+            ActiveForm.FormBorderStyle = System.Windows.Forms.FormBorderStyle.Sizable;
+        }
+
+        private void pictureBox1_DoubleClick(object sender, EventArgs e)
+        {
+            pictureBox1.BringToFront();
+            pictureBox1.Dock = System.Windows.Forms.DockStyle.Fill;
+            ActiveForm.FormBorderStyle = System.Windows.Forms.FormBorderStyle.None;
+        }
+
+        private void pictureBox1_Click(object sender, EventArgs e)
+        {
+            pictureBox1.Dock = System.Windows.Forms.DockStyle.None;
+            ActiveForm.FormBorderStyle = System.Windows.Forms.FormBorderStyle.Sizable;
+        }
+
+        private void pictureBox2_Click(object sender, EventArgs e)
+        {
+            pictureBox2.Dock = System.Windows.Forms.DockStyle.None;
+            ActiveForm.FormBorderStyle = System.Windows.Forms.FormBorderStyle.Sizable;
+        }
+
+        private void pictureBox2_DoubleClick(object sender, EventArgs e)
+        {
+            pictureBox2.BringToFront();
+            pictureBox2.Dock = System.Windows.Forms.DockStyle.Fill;
+            ActiveForm.FormBorderStyle = System.Windows.Forms.FormBorderStyle.None;
         }
     }
 }

@@ -184,78 +184,10 @@ namespace PictureSuperMix
 
         private void button2_Click(object sender, EventArgs e)
         {
+            string path = OriPath;
 
+            System.Diagnostics.Process.Start("explorer.exe", path);
 
-            Bitmap bmp = bmpLeftChange;
-
-            BitmapData imageData = bmp.LockBits(new Rectangle(0, 0, bmp.Width, bmp.Height),
-            ImageLockMode.ReadOnly, bmp.PixelFormat);
-
-
-
-            unsafe
-            {
-                //Count red and black pixels
-                try
-                {
-                    UnmanagedImage img = new UnmanagedImage(imageData);
-
-                    int height = img.Height;
-                    int width = img.Width;
-                    int pixelSize = (img.PixelFormat == PixelFormat.Format24bppRgb) ? 3 : 4;
-                    byte* p = (byte*)img.ImageData.ToPointer();
-
-                    double ylevel = ((double)img.Height) /board_adj.GetLength(0);
-                    double xlevel = ((double)img.Width) / board_adj.GetLength(1);
-
-                    // for each line
-                    for (int y = 0; y < height; y++)
-                    {
-                        // for each pixel
-                        for (int x = 0; x < width; x++, p += pixelSize)
-                        {
-                            int r = (int)p[RGB.R]; //Red pixel value
-                            int g = (int)p[RGB.G]; //Green pixel value
-                            int b = (int)p[RGB.B]; //Blue pixel value
-
-                            /*
-                            double change_rate = 0.1;
-                            while (change_rate < 1)
-                            {
-                                if (x < (width * change_rate))
-                                {
-                                    p[RGB.R] = (byte)(r * change_rate);
-                                    p[RGB.G] = (byte)(g * change_rate);
-                                    p[RGB.B] = (byte)(b * change_rate);
-                                    break;
-                                }
-                                change_rate += 0.1;
-                            }
-                            */
-                            int cur_ratex = (int)(x / xlevel);
-                            int cur_ratey = (int)(y / ylevel);
-
-                            p[RGB.R] = (byte)(r * board_adj[cur_ratey, cur_ratex] / 100);
-                            p[RGB.G] = (byte)(g * board_adj[cur_ratey, cur_ratex] / 100);
-                            p[RGB.B] = (byte)(b * board_adj[cur_ratey, cur_ratex] / 100);
-
-
-                        }
-                    }
-
-                }
-                finally
-                {
-                    bmp.UnlockBits(imageData); //Unlock
-                }
-
-            }
-
-
-            bmp.Save(SavePathRight, System.Drawing.Imaging.ImageFormat.Bmp);
-
-            int zzz = 1;
-            zzz++;
         }
 
         private void button3_Click(object sender, EventArgs e)
@@ -263,6 +195,8 @@ namespace PictureSuperMix
 
 
             Bitmap bmpBase = new Bitmap(Image.FromFile(SourcePath));
+
+            bmpBase = ResizeBitmap(bmpBase, 1600, 500);
 
 
             double zmc = Convert.ToDouble(textBox1.Text);
@@ -309,6 +243,7 @@ namespace PictureSuperMix
 
         private void button4_Click(object sender, EventArgs e)
         {
+            double zmc2 = Convert.ToDouble(textBox2.Text);
 
 
             int y = board_adj.GetLength(0);
@@ -317,10 +252,16 @@ namespace PictureSuperMix
             for(int i = 0; i< y; i++)
             {
                 for (int ii = 0; ii < x; ii++)
-                    board_adj[i,ii] += 100;
+                    if (ii <= (x * (1-zmc2)))
+                        board_adj[i, ii] = 1000;
+                    else
+                    {
+                        board_adj[i, ii] =1000*((x-ii)/(x * zmc2));
+                    }
+                    
             }
 
-            board_adj[0, 1] = 1;
+            //board_adj[0, 1] = 1;
 
 
 
@@ -340,7 +281,27 @@ namespace PictureSuperMix
 
 
         }
+        public Bitmap ResizeBitmap(Bitmap initialBitmap, int width, int height)
+        {
+            try
+            {
+                Bitmap templateImage = new System.Drawing.Bitmap(width, height);
+                Graphics templateG = Graphics.FromImage(templateImage);
+                templateG.InterpolationMode = System.Drawing.Drawing2D.InterpolationMode.High;
+                templateG.SmoothingMode = System.Drawing.Drawing2D.SmoothingMode.HighQuality;
+                templateG.Clear(Color.White);
+                templateG.DrawImage(initialBitmap, new Rectangle(0, 0, width, height), new Rectangle(0, 0, initialBitmap.Width, initialBitmap.Height), GraphicsUnit.Pixel);
+                return templateImage;
+            }
+            catch (Exception ex)
+            {
+                throw ex;
+            }
+        }
 
+        private void textBox2_TextChanged(object sender, EventArgs e)
+        {
 
+        }
     }
 }

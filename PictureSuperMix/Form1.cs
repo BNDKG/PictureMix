@@ -305,16 +305,6 @@ namespace PictureSuperMix
 
         }
 
-        private void button5_Click(object sender, EventArgs e)
-        {
-
-            pictureBox1.Dock = System.Windows.Forms.DockStyle.Fill;
-            ActiveForm.FormBorderStyle = System.Windows.Forms.FormBorderStyle.None;
-
-            pictureBox1.Dock = System.Windows.Forms.DockStyle.None;
-            ActiveForm.FormBorderStyle = System.Windows.Forms.FormBorderStyle.Sizable;
-        }
-
         private void pictureBox1_DoubleClick(object sender, EventArgs e)
         {
             pictureBox1.BringToFront();

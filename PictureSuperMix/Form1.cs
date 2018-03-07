@@ -192,11 +192,12 @@ namespace PictureSuperMix
 
         private void button3_Click(object sender, EventArgs e)
         {
-
+            int width = Convert.ToInt16(textBox3.Text);
+            int hight = Convert.ToInt16(textBox4.Text);
 
             Bitmap bmpBase = new Bitmap(Image.FromFile(SourcePath));
 
-            bmpBase = ResizeBitmap(bmpBase, 1600, 500);
+            bmpBase = ResizeBitmap(bmpBase, width, hight);
 
 
             double zmc = Convert.ToDouble(textBox1.Text);
@@ -224,7 +225,7 @@ namespace PictureSuperMix
         {
             OriPath = System.IO.Directory.GetCurrentDirectory();
 
-            SourcePath = OriPath + "\\SourcePic.png";
+            SourcePath = OriPath + "\\SourcePic.jpg";
             SavePathLeft = OriPath + "\\Left.bmp";
             SavePathRight = OriPath + "\\Right.bmp";
             SavePathLeft2 = OriPath + "\\Left2.bmp";

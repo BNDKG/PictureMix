@@ -62,6 +62,10 @@ namespace PictureSuperMix
         string SavePathLeft2;
         string SavePathRight2;
 
+        string SourcePathBlack; 
+        string SourcePathWhite;
+        string SourcePathColor;
+
         private void button1_Click(object sender, EventArgs e)
         {
 
@@ -231,6 +235,10 @@ namespace PictureSuperMix
             SavePathLeft2 = OriPath + "\\Left2.bmp";
             SavePathRight2 = OriPath + "\\Right2.bmp";
 
+            SourcePathBlack = OriPath + "\\pics\\BlackPic.jpg";
+            SourcePathWhite = OriPath + "\\pics\\WhitePic.jpg";
+            SourcePathColor = OriPath + "\\pics\\ColorPic.png";
+
             int x = board_adj.GetLength(1);
             int y = board_adj.GetLength(0);
 
@@ -329,6 +337,56 @@ namespace PictureSuperMix
         {
             pictureBox2.BringToFront();
             pictureBox2.Dock = System.Windows.Forms.DockStyle.Fill;
+            ActiveForm.FormBorderStyle = System.Windows.Forms.FormBorderStyle.None;
+        }
+
+        private void pictureBox3_Click(object sender, EventArgs e)
+        {
+            pictureBox3.Dock = System.Windows.Forms.DockStyle.None;
+            ActiveForm.FormBorderStyle = System.Windows.Forms.FormBorderStyle.Sizable;
+        }
+
+        private void pictureBox3_DoubleClick(object sender, EventArgs e)
+        {
+            pictureBox3.BringToFront();
+            pictureBox3.Dock = System.Windows.Forms.DockStyle.Fill;
+            ActiveForm.FormBorderStyle = System.Windows.Forms.FormBorderStyle.None;
+        }
+
+        private void pictureBox4_Click(object sender, EventArgs e)
+        {
+            pictureBox4.Dock = System.Windows.Forms.DockStyle.None;
+            ActiveForm.FormBorderStyle = System.Windows.Forms.FormBorderStyle.Sizable;
+        }
+
+        private void pictureBox4_DoubleClick(object sender, EventArgs e)
+        {
+            pictureBox4.BringToFront();
+            pictureBox4.Dock = System.Windows.Forms.DockStyle.Fill;
+            ActiveForm.FormBorderStyle = System.Windows.Forms.FormBorderStyle.None;
+        }
+
+        private void button5_Click(object sender, EventArgs e)
+        {
+            Bitmap bmpBlack = new Bitmap(Image.FromFile(SourcePathBlack));
+            Bitmap bmpWhite = new Bitmap(Image.FromFile(SourcePathWhite));
+            Bitmap bmpColor = new Bitmap(Image.FromFile(SourcePathColor));
+
+            pictureBox3.Image = bmpWhite;
+            pictureBox4.Image = bmpBlack;
+            pictureBox5.Image = bmpColor;
+        }
+
+        private void pictureBox5_Click(object sender, EventArgs e)
+        {
+            pictureBox5.Dock = System.Windows.Forms.DockStyle.None;
+            ActiveForm.FormBorderStyle = System.Windows.Forms.FormBorderStyle.Sizable;
+        }
+
+        private void pictureBox5_DoubleClick(object sender, EventArgs e)
+        {
+            pictureBox5.BringToFront();
+            pictureBox5.Dock = System.Windows.Forms.DockStyle.Fill;
             ActiveForm.FormBorderStyle = System.Windows.Forms.FormBorderStyle.None;
         }
     }

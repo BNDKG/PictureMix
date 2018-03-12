@@ -46,6 +46,7 @@
             this.pictureBox4 = new AForge.Controls.PictureBox();
             this.button5 = new System.Windows.Forms.Button();
             this.pictureBox5 = new AForge.Controls.PictureBox();
+            this.button6 = new System.Windows.Forms.Button();
             ((System.ComponentModel.ISupportInitialize)(this.pictureBox1)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.pictureBox2)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.pictureBox3)).BeginInit();
@@ -214,7 +215,7 @@
             // 
             this.pictureBox4.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
             this.pictureBox4.Image = null;
-            this.pictureBox4.Location = new System.Drawing.Point(347, 43);
+            this.pictureBox4.Location = new System.Drawing.Point(319, 43);
             this.pictureBox4.Name = "pictureBox4";
             this.pictureBox4.Size = new System.Drawing.Size(263, 126);
             this.pictureBox4.SizeMode = System.Windows.Forms.PictureBoxSizeMode.StretchImage;
@@ -237,7 +238,7 @@
             // 
             this.pictureBox5.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
             this.pictureBox5.Image = null;
-            this.pictureBox5.Location = new System.Drawing.Point(635, 43);
+            this.pictureBox5.Location = new System.Drawing.Point(588, 43);
             this.pictureBox5.Name = "pictureBox5";
             this.pictureBox5.Size = new System.Drawing.Size(263, 126);
             this.pictureBox5.SizeMode = System.Windows.Forms.PictureBoxSizeMode.StretchImage;
@@ -246,11 +247,22 @@
             this.pictureBox5.Click += new System.EventHandler(this.pictureBox5_Click);
             this.pictureBox5.DoubleClick += new System.EventHandler(this.pictureBox5_DoubleClick);
             // 
+            // button6
+            // 
+            this.button6.Location = new System.Drawing.Point(612, 261);
+            this.button6.Name = "button6";
+            this.button6.Size = new System.Drawing.Size(110, 53);
+            this.button6.TabIndex = 18;
+            this.button6.Text = "生成视频用图片";
+            this.button6.UseVisualStyleBackColor = true;
+            this.button6.Click += new System.EventHandler(this.button6_Click);
+            // 
             // Form1
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 12F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(1038, 596);
+            this.Controls.Add(this.button6);
             this.Controls.Add(this.pictureBox5);
             this.Controls.Add(this.button5);
             this.Controls.Add(this.pictureBox4);
@@ -302,6 +314,7 @@
         private AForge.Controls.PictureBox pictureBox4;
         private System.Windows.Forms.Button button5;
         private AForge.Controls.PictureBox pictureBox5;
+        private System.Windows.Forms.Button button6;
     }
 }
 

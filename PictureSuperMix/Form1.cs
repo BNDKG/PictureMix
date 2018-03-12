@@ -368,8 +368,8 @@ namespace PictureSuperMix
 
         private void button5_Click(object sender, EventArgs e)
         {
-            Bitmap bmpBlack = new Bitmap(Image.FromFile(SourcePathBlack));
             Bitmap bmpWhite = new Bitmap(Image.FromFile(SourcePathWhite));
+            Bitmap bmpBlack = new Bitmap(Image.FromFile(SourcePathBlack));
             Bitmap bmpColor = new Bitmap(Image.FromFile(SourcePathColor));
 
             pictureBox3.Image = bmpWhite;
@@ -389,5 +389,154 @@ namespace PictureSuperMix
             pictureBox5.Dock = System.Windows.Forms.DockStyle.Fill;
             ActiveForm.FormBorderStyle = System.Windows.Forms.FormBorderStyle.None;
         }
+
+        private void button6_Click(object sender, EventArgs e)
+        {
+            zzzoutput_test();
+        }
+
+        private void zzzoutput_test()
+        {
+            //Bitmap curbitmap = bmpLeft.Clone(new Rectangle(0, 0, bmpLeft.Width, bmpLeft.Height), bmpLeft.PixelFormat);
+
+            int startpoint = 0;
+            int changepoint = 1;
+
+            for (int i = 0; i < 1000; i++)
+            {
+                Bitmap curbitmap = new System.Drawing.Bitmap(400, 300);
+
+                BitmapData curimageData = curbitmap.LockBits(new Rectangle(0, 0, curbitmap.Width, curbitmap.Height),
+                ImageLockMode.ReadOnly, curbitmap.PixelFormat);
+
+                //###########################left###########################//
+                unsafe
+                {
+                    //Count red and black pixels
+                    try
+                    {
+                        UnmanagedImage img = new UnmanagedImage(curimageData);
+
+                        int height = img.Height;
+                        int width = img.Width;
+                        int pixelSize = (img.PixelFormat == PixelFormat.Format24bppRgb) ? 3 : 4;
+                        byte* p = (byte*)img.ImageData.ToPointer();
+
+                        double ylevel = ((double)img.Height) / board_adj.GetLength(0);
+                        double xlevel = ((double)img.Width) / board_adj.GetLength(1);
+
+                        int yall = board_adj.GetLength(0);
+                        int xall = board_adj.GetLength(1);
+
+
+                        int cur_value = startpoint;
+                        int cur_changpoint = changepoint;
+
+
+                        // for each line
+                        for (int y = 0; y < height; y++)
+                        {
+                            cur_value = startpoint;
+                            cur_changpoint = changepoint;
+                            // for each pixel
+                            for (int x = 0; x < width; x++, p += pixelSize)
+                            {
+                                /*
+                                int r = (int)p[RGB.R]; //Red pixel value
+                                int g = (int)p[RGB.G]; //Green pixel value
+                                int b = (int)p[RGB.B]; //Blue pixel value
+
+
+                                int cur_ratex = (int)(x / xlevel);
+                                int cur_ratey = (int)(y / ylevel);
+
+                                p[RGB.R] = (byte)(r * board_adj[cur_ratey, cur_ratex] / 1000);
+                                p[RGB.G] = (byte)(g * board_adj[cur_ratey, cur_ratex] / 1000);
+                                p[RGB.B] = (byte)(b * board_adj[cur_ratey, cur_ratex] / 1000);
+                                
+                                byte cur_value = 0;
+                                if((x-i) < ( width / 2))
+                                {
+                                    cur_value = (byte)(255 * (2 * (double)(x - i) / (double)width));
+                                }
+                                else
+                                {
+                                    cur_value = (byte)(255 * ((double)(2 * width - 2 * (x-i)) / (double)width));
+                                }
+                                */
+
+
+                                p[RGB.R] = (byte)cur_value;
+                                p[RGB.G] = (byte)cur_value;
+                                p[RGB.B] = (byte)cur_value;
+
+                                if (cur_changpoint > 0)
+                                {
+                                    cur_value = cur_value + 1;
+                                    if (cur_value >= 255)
+                                    {
+                                        cur_value = 255;
+                                        cur_changpoint = -1;
+                                    }
+                                }
+                                else
+                                {
+                                    cur_value = cur_value - 1;
+                                    if (cur_value <= 0)
+                                    {
+                                        cur_value = 0;
+                                        cur_changpoint = 1;
+                                    }
+                                }
+
+
+
+                            }
+
+                        }
+
+                    }
+                    finally
+                    {
+                        curbitmap.UnlockBits(curimageData); //Unlock
+                    }
+
+                }
+                string sdf = String.Format("{0:D4}", i);
+
+
+                string zzzzz = "E:\\image_input\\dd"+ sdf + ".bmp";
+
+
+                curbitmap.Save(zzzzz, System.Drawing.Imaging.ImageFormat.Bmp);
+
+                curbitmap.Dispose();
+
+
+                if (changepoint > 0)
+                {
+                    startpoint = startpoint + 1;
+                    if (startpoint >= 255)
+                    {
+                        startpoint = 255;
+                        changepoint = -1;
+                    }
+                }
+                else
+                {
+                    startpoint = startpoint - 1;
+                    if (startpoint <= 0)
+                    {
+                        startpoint = 0;
+                        changepoint = 1;
+                    }
+                }
+                //startpoint += 1;
+
+
+
+            }
+        }
+
     }
 }

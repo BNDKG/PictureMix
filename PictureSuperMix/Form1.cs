@@ -15,6 +15,7 @@ using AForge;
 using AForge.Imaging.Filters;
 using AForge.Imaging;
 using AForge.Math.Geometry;
+using AForge.Video.FFMPEG;
 
 using Image = System.Drawing.Image; //Remove ambiguousness between AForge.Image and System.Drawing.Image
 using Point = System.Drawing.Point; //Remove ambiguousness between AForge.Point and System.Drawing.Point
@@ -402,9 +403,9 @@ namespace PictureSuperMix
             int startpoint = 0;
             int changepoint = 1;
 
-            for (int i = 0; i < 1000; i++)
+            for (int i = 0; i < 500; i++)
             {
-                Bitmap curbitmap = new System.Drawing.Bitmap(400, 300);
+                Bitmap curbitmap = new System.Drawing.Bitmap(192, 80);
 
                 BitmapData curimageData = curbitmap.LockBits(new Rectangle(0, 0, curbitmap.Width, curbitmap.Height),
                 ImageLockMode.ReadOnly, curbitmap.PixelFormat);
@@ -538,5 +539,468 @@ namespace PictureSuperMix
             }
         }
 
+        private void button7_Click(object sender, EventArgs e)
+        {
+            
+            int width = 858;
+            int height = 480;
+
+            int testcorr = 1;
+
+            testcorr += 1;
+
+            VideoFileWriter writer = new VideoFileWriter();
+
+            writer.Open("sample-video.avi", width, height, 1, VideoCodec.MPEG4, 2500000);
+
+            Bitmap image = new Bitmap(width, height);
+
+
+            using (OpenFileDialog dlg = new OpenFileDialog())
+
+            {
+
+                dlg.Title = "Open Image";
+
+                dlg.Filter = "bmp files (*.bmp)|*.bmp";
+
+
+
+                if (dlg.ShowDialog() == DialogResult.OK)
+
+                {
+
+                    image = new Bitmap(dlg.FileName);
+
+                }
+
+            }
+
+
+
+            for (int i = 0; i < 36000; i++)
+
+            {
+
+                writer.WriteVideoFrame(image);
+
+            }
+
+
+
+            writer.Close();
+
+            Application.Exit();
+            
+        }
+
+        private void button8_Click(object sender, EventArgs e)
+        {
+            int startpoint = 0;
+            int changepoint = 1;
+
+            for (int i = 0; i < 300; i++)
+            {
+                Bitmap curbitmap = new System.Drawing.Bitmap(1280, 800);
+
+                BitmapData curimageData = curbitmap.LockBits(new Rectangle(0, 0, curbitmap.Width, curbitmap.Height),
+                ImageLockMode.ReadOnly, curbitmap.PixelFormat);
+
+                //###########################left###########################//
+                unsafe
+                {
+                    //Count red and black pixels
+                    try
+                    {
+                        UnmanagedImage img = new UnmanagedImage(curimageData);
+
+                        int height = img.Height;
+                        int width = img.Width;
+                        int pixelSize = (img.PixelFormat == PixelFormat.Format24bppRgb) ? 3 : 4;
+                        byte* p = (byte*)img.ImageData.ToPointer();
+
+                        double ylevel = ((double)img.Height) / board_adj.GetLength(0);
+                        double xlevel = ((double)img.Width) / board_adj.GetLength(1);
+
+                        int yall = board_adj.GetLength(0);
+                        int xall = board_adj.GetLength(1);
+
+
+                        int cur_value = startpoint;
+                        int cur_changpoint = changepoint;
+
+
+                        // for each line
+                        for (int y = 0; y < height; y++)
+                        {
+                            cur_value = startpoint;
+                            cur_changpoint = changepoint;
+                            // for each pixel
+                            for (int x = 0; x < width; x++, p += pixelSize)
+                            {
+
+
+                                p[RGB.R] =128;
+                                p[RGB.G] =128;
+                                p[RGB.B] =128;
+     
+
+                            }
+
+                        }
+
+                    }
+                    finally
+                    {
+                        curbitmap.UnlockBits(curimageData); //Unlock
+                    }
+
+                }
+                string sdf = String.Format("{0:D4}", i);
+
+
+                string zzzzz = "E:\\image_input\\dd" + sdf + ".bmp";
+
+
+                curbitmap.Save(zzzzz, System.Drawing.Imaging.ImageFormat.Bmp);
+
+                curbitmap.Dispose();
+
+
+                if (changepoint > 0)
+                {
+                    startpoint = startpoint + 1;
+                    if (startpoint >= 255)
+                    {
+                        startpoint = 255;
+                        changepoint = -1;
+                    }
+                }
+                else
+                {
+                    startpoint = startpoint - 1;
+                    if (startpoint <= 0)
+                    {
+                        startpoint = 0;
+                        changepoint = 1;
+                    }
+                }
+                //startpoint += 1;
+
+
+
+            }
+        }
+
+        private void button9_Click(object sender, EventArgs e)
+        {
+
+            double startpoint = 0;
+            int changepoint = 1;
+
+            for (int i = 0; i < 500; i++)
+            {
+                Bitmap curbitmap = new System.Drawing.Bitmap(192, 80);
+
+                BitmapData curimageData = curbitmap.LockBits(new Rectangle(0, 0, curbitmap.Width, curbitmap.Height),
+                ImageLockMode.ReadOnly, curbitmap.PixelFormat);
+
+                //###########################left###########################//
+                unsafe
+                {
+                    //Count red and black pixels
+                    try
+                    {
+                        UnmanagedImage img = new UnmanagedImage(curimageData);
+
+                        int height = img.Height;
+                        int width = img.Width;
+                        int pixelSize = (img.PixelFormat == PixelFormat.Format24bppRgb) ? 3 : 4;
+                        byte* p = (byte*)img.ImageData.ToPointer();
+
+                        double ylevel = ((double)img.Height) / board_adj.GetLength(0);
+                        double xlevel = ((double)img.Width) / board_adj.GetLength(1);
+
+                        int yall = board_adj.GetLength(0);
+                        int xall = board_adj.GetLength(1);
+
+
+                        int cur_value = (int)startpoint;
+                        int cur_changpoint = changepoint;
+
+
+                        // for each line
+                        for (int y = 0; y < height; y++)
+                        {
+
+                            // for each pixel
+                            for (int x = 0; x < width; x++, p += pixelSize)
+                            {
+
+                                p[RGB.R] = (byte)cur_value;
+                                p[RGB.G] = (byte)cur_value;
+                                p[RGB.B] = (byte)cur_value;
+
+                            }
+
+                        }
+
+                    }
+                    finally
+                    {
+                        curbitmap.UnlockBits(curimageData); //Unlock
+                    }
+
+                }
+                string sdf = String.Format("{0:D4}", i);
+
+
+                string zzzzz = "E:\\image_input\\dd" + sdf + ".bmp";
+
+
+                curbitmap.Save(zzzzz, System.Drawing.Imaging.ImageFormat.Bmp);
+
+                curbitmap.Dispose();
+
+
+                if (changepoint > 0)
+                {
+                    startpoint = startpoint + 4;
+                    if (startpoint >= 128)
+                    {
+                        startpoint = 128;
+                        changepoint = -1;
+                    }
+                }
+                else
+                {
+                    startpoint = startpoint - 4;
+                    if (startpoint <= 0)
+                    {
+                        startpoint = 0;
+                        changepoint = 1;
+                    }
+                }
+            }
+        }
+
+        private void button10_Click(object sender, EventArgs e)
+        {
+
+            int[,,] fontnum = new int[,,] {
+                {
+                { 0,1,1,0,0 },
+                { 1,0,0,1,0 },
+                { 1,0,0,1,0 },
+                { 1,0,0,1,0 },
+                { 0,1,1,0,0 }
+                },{
+                { 0,0,1,0,0 },
+                { 0,1,1,0,0 },
+                { 0,0,1,0,0 },
+                { 0,0,1,0,0 },
+                { 0,1,1,1,0 }
+                },{
+                { 0,1,1,0,0 },
+                { 1,0,0,1,0 },
+                { 0,0,1,0,0 },
+                { 0,1,0,0,0 },
+                { 1,1,1,1,0 }
+                },{
+                { 1,1,1,0,0 },
+                { 0,0,0,1,0 },
+                { 0,0,1,0,0 },
+                { 1,0,0,1,0 },
+                { 0,1,1,0,0 }
+                },{
+                { 0,0,0,1,0 },
+                { 0,0,1,1,0 },
+                { 0,1,0,1,0 },
+                { 1,1,1,1,1 },
+                { 0,0,0,1,0 }
+                },{
+                { 1,1,1,0,0 },
+                { 1,0,0,0,0 },
+                { 0,1,1,0,0 },
+                { 0,0,0,1,0 },
+                { 1,1,1,0,0 }
+                },{
+                { 0,1,1,0,0 },
+                { 1,0,0,0,0 },
+                { 1,1,1,0,0 },
+                { 1,0,0,1,0 },
+                { 0,1,1,0,0 }
+                },{
+                { 1,1,1,1,1 },
+                { 0,0,0,1,0 },
+                { 0,0,1,0,0 },
+                { 0,0,1,0,0 },
+                { 0,0,1,0,0 }
+                },{
+                { 0,1,1,0,0 },
+                { 1,0,0,1,0 },
+                { 0,1,1,0,0 },
+                { 1,0,0,1,0 },
+                { 0,1,1,0,0 }
+                },{
+                { 0,1,1,0,0 },
+                { 1,0,0,1,0 },
+                { 0,1,1,1,0 },
+                { 0,0,0,1,0 },
+                { 0,1,1,0,0 }
+                }
+            };
+
+            int startpointx = 15;
+            int startpointy = 35;
+            int fontlong = 4;
+            int objx = 0;
+            int objy = 0;
+            int objoffset = 3;
+
+            for (int i = 0; i < 5; i++)
+            {
+                Bitmap curbitmap = new System.Drawing.Bitmap(1280, 800);
+
+                BitmapData curimageData = curbitmap.LockBits(new Rectangle(0, 0, curbitmap.Width, curbitmap.Height),
+                ImageLockMode.ReadOnly, curbitmap.PixelFormat);
+
+                //###########################left###########################//
+                unsafe
+                {
+                    //Count red and black pixels
+                    try
+                    {
+                        UnmanagedImage img = new UnmanagedImage(curimageData);
+
+                        int height = img.Height;
+                        int width = img.Width;
+                        int pixelSize = (img.PixelFormat == PixelFormat.Format24bppRgb) ? 3 : 4;
+
+
+                        double ylevel = ((double)img.Height) / board_adj.GetLength(0);
+                        double xlevel = ((double)img.Width) / board_adj.GetLength(1);
+
+                        int yall = board_adj.GetLength(0);
+                        int xall = board_adj.GetLength(1);
+                        byte* p = (byte*)img.ImageData.ToPointer();
+
+                        // for each line
+
+                        int cur_value = 0;
+
+                        for (objx = 0; objx < 20; objx++)
+                        {
+                            for (objy = 0; objy < 20; objy++)
+                            {
+                                p = (byte*)img.ImageData.ToPointer();
+
+                                startpointx = objx * 40 + objoffset;
+                                startpointy = objy * 40 + objoffset;
+
+                                for (int y = 0; y < height; y++)
+                                {
+
+                                    // for each pixel
+                                    for (int x = 0; x < width; x++, p += pixelSize)
+                                    {
+                                        int figoffset = 10;
+                                        cur_value = p[RGB.R];
+                                        if (x >= startpointx && y >= startpointy)
+                                        {
+                                            if ((x <= (startpointx + fontlong)) && (y <= (startpointy + fontlong)))
+                                            {
+                                                int buf = fontnum[(objx/10), y - startpointy, x - startpointx];
+                                                if (buf == 1)
+                                                {
+                                                    cur_value = 255;
+                                                }
+                                            }
+                                        }
+                                        if (x >= startpointx+ figoffset && y >= startpointy)
+                                        {
+                                            if ((x <= (startpointx+ figoffset + fontlong)) && (y <= (startpointy + fontlong)))
+                                            {
+                                                int buf = fontnum[(objx%10), y - startpointy, x - startpointx- figoffset];
+                                                if (buf == 1)
+                                                {
+                                                    cur_value = 255;
+                                                }
+                                            }
+                                        }
+                                        if (x >= startpointx  && y >= startpointy + figoffset)
+                                        {
+                                            if ((x <= (startpointx  + fontlong)) && (y <= (startpointy + fontlong + figoffset)))
+                                            {
+                                                int buf = fontnum[(objy/10), y - startpointy - figoffset, x - startpointx];
+                                                if (buf == 1)
+                                                {
+                                                    cur_value = 255;
+                                                }
+                                            }
+                                        }
+                                        if (x >= startpointx + figoffset && y >= startpointy + figoffset)
+                                        {
+                                            if ((x <= (startpointx + figoffset + fontlong)) && (y <= (startpointy + fontlong + figoffset)))
+                                            {
+                                                int buf = fontnum[(objy%10), y - startpointy - figoffset, x - startpointx - figoffset];
+                                                if (buf == 1)
+                                                {
+                                                    cur_value = 255;
+                                                }
+                                            }
+                                        }
+
+                                        p[RGB.R] = (byte)cur_value;
+                                        p[RGB.G] = (byte)cur_value;
+                                        p[RGB.B] = (byte)cur_value;
+
+                                    }
+                                }
+
+                            }
+                        }
+                        /*
+                        p = (byte*)img.ImageData.ToPointer();
+                        for (int y = 0; y < height; y++)
+                        {
+
+                            // for each pixel
+                            for (int x = 0; x < width; x++, p += pixelSize)
+                            {
+
+                                cur_value = p[RGB.R];
+                                cur_value = 255 - cur_value;
+
+                                p[RGB.R] = (byte)cur_value;
+                                p[RGB.G] = (byte)cur_value;
+                                p[RGB.B] = (byte)cur_value;
+
+                            }
+                        }
+                        */
+
+                        
+                    }
+                    finally
+                    {
+                        curbitmap.UnlockBits(curimageData); //Unlock
+                    }
+
+                }
+                string sdf = String.Format("{0:D4}", i);
+
+
+                string zzzzz = "E:\\image_input\\dd" + sdf + ".bmp";
+
+
+                curbitmap.Save(zzzzz, System.Drawing.Imaging.ImageFormat.Bmp);
+
+                curbitmap.Dispose();
+
+
+
+            }
+        }
     }
 }

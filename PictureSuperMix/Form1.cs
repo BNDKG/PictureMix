@@ -7,7 +7,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
-
+using System.IO;
 
 using System.Drawing.Imaging;
 
@@ -66,6 +66,7 @@ namespace PictureSuperMix
         string SourcePathBlack; 
         string SourcePathWhite;
         string SourcePathColor;
+        string picdic ;
 
         private void button1_Click(object sender, EventArgs e)
         {
@@ -240,16 +241,26 @@ namespace PictureSuperMix
             SourcePathWhite = OriPath + "\\pics\\WhitePic.jpg";
             SourcePathColor = OriPath + "\\pics\\ColorPic.png";
 
+            picdic = OriPath + "\\image_input";
+
             int x = board_adj.GetLength(1);
             int y = board_adj.GetLength(0);
-
+            //初始化显示矩阵
             for (int i = 0; i < y; i++)
             {
                 for (int ii = 0; ii < x; ii++)
                     board_adj[i, ii] =1000-((double)ii/ (double)x)*1000;
-            }            
+            }
 
-            int zzz = 1;
+            
+
+
+            if (!Directory.Exists(picdic))
+            {
+                Directory.CreateDirectory(picdic);
+            }
+
+
         }
 
         private void button4_Click(object sender, EventArgs e)
@@ -369,6 +380,14 @@ namespace PictureSuperMix
 
         private void button5_Click(object sender, EventArgs e)
         {
+            string picdic = OriPath + "\\pics";
+
+
+            if (!Directory.Exists(picdic))
+            {
+                Directory.CreateDirectory(picdic);
+            }
+
             Bitmap bmpWhite = new Bitmap(Image.FromFile(SourcePathWhite));
             Bitmap bmpBlack = new Bitmap(Image.FromFile(SourcePathBlack));
             Bitmap bmpColor = new Bitmap(Image.FromFile(SourcePathColor));
@@ -403,9 +422,9 @@ namespace PictureSuperMix
             int startpoint = 0;
             int changepoint = 1;
 
-            for (int i = 0; i < 101; i++)
+            for (int i = 0; i < 500; i++)
             {
-                Bitmap curbitmap = new System.Drawing.Bitmap(1920, 1080);
+                Bitmap curbitmap = new System.Drawing.Bitmap(1920, 800);
 
                 BitmapData curimageData = curbitmap.LockBits(new Rectangle(0, 0, curbitmap.Width, curbitmap.Height),
                 ImageLockMode.ReadOnly, curbitmap.PixelFormat);
@@ -506,7 +525,7 @@ namespace PictureSuperMix
                 string sdf = String.Format("{0:D4}", i);
 
 
-                string zzzzz = "E:\\image_input\\dd"+ sdf + ".bmp";
+                string zzzzz = picdic + "\\dd" + sdf + ".bmp";
 
 
                 curbitmap.Save(zzzzz, System.Drawing.Imaging.ImageFormat.Bmp);
@@ -583,7 +602,7 @@ namespace PictureSuperMix
                 string sdf = String.Format("{0:D4}", i);
 
 
-                curpicpath = "E:\\image_input\\dd" + sdf + ".bmp";
+                curpicpath = picdic + "\\dd" + sdf + ".bmp";
 
 
                 image = new Bitmap(curpicpath);
@@ -667,7 +686,7 @@ namespace PictureSuperMix
                 string sdf = String.Format("{0:D4}", i);
 
 
-                string zzzzz = "E:\\image_input\\dd" + sdf + ".bmp";
+                string zzzzz = picdic+"\\dd" + sdf + ".bmp";
 
 
                 curbitmap.Save(zzzzz, System.Drawing.Imaging.ImageFormat.Bmp);
@@ -763,7 +782,7 @@ namespace PictureSuperMix
                 string sdf = String.Format("{0:D4}", i);
 
 
-                string zzzzz = "E:\\image_input\\dd" + sdf + ".bmp";
+                string zzzzz = picdic + "\\dd" + sdf + ".bmp";
 
 
                 curbitmap.Save(zzzzz, System.Drawing.Imaging.ImageFormat.Bmp);
@@ -999,7 +1018,7 @@ namespace PictureSuperMix
                 string sdf = String.Format("{0:D4}", i);
 
 
-                string zzzzz = "E:\\image_input\\dd" + sdf + ".bmp";
+                string zzzzz = picdic + "\\dd" + sdf + ".bmp";
 
 
                 curbitmap.Save(zzzzz, System.Drawing.Imaging.ImageFormat.Bmp);
@@ -1187,7 +1206,7 @@ namespace PictureSuperMix
                 string sdf = String.Format("{0:D4}", i);
 
 
-                string zzzzz = "E:\\image_input\\dd" + sdf + ".bmp";
+                string zzzzz = picdic + "\\dd" + sdf + ".bmp";
 
 
                 curbitmap.Save(zzzzz, System.Drawing.Imaging.ImageFormat.Bmp);

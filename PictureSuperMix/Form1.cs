@@ -561,7 +561,7 @@ namespace PictureSuperMix
         private void button7_Click(object sender, EventArgs e)
         {
             //和ffmpeg差不多，不能一帧帧超高清显示，附一个ffmpeg代码
-            //ffmpeg -i E:\image_input\dd%04d.bmp -r 60 -s 1920x1080 -b:v 200000k  E:\zmctest222.avi
+            //ffmpeg -i E:\image_input\dd%04d.bmp -r 60 -s 1920x1080 -b:v 20000k  E:\zmctest222.avi
 
             int width = 1280;
             int height = 800;
@@ -569,7 +569,7 @@ namespace PictureSuperMix
 
             VideoFileWriter writer = new VideoFileWriter();
 
-            writer.Open("sample-video.avi", width, height, 10, VideoCodec.H263P, 25000000);
+            writer.Open("sample-video.mp4", width, height, 25, VideoCodec.MPEG4, 25000000);
 
             Bitmap image = new Bitmap(width, height);
 
@@ -594,9 +594,13 @@ namespace PictureSuperMix
 
             }
             */
+
+            System.IO.DirectoryInfo dirInfo = new System.IO.DirectoryInfo(picdic);
+            int picall=GetFilesCount(dirInfo);
+
             string curpicpath;
 
-            for (int i = 0; i < 511; i++)
+            for (int i = 0; i < (picall-2); i++)
 
             {
                 string sdf = String.Format("{0:D4}", i);
@@ -621,6 +625,16 @@ namespace PictureSuperMix
             
         }
 
+        public static int GetFilesCount(System.IO.DirectoryInfo dirInfo)
+        {
+            int totalFile = 0;
+            totalFile += dirInfo.GetFiles().Length;
+            foreach (System.IO.DirectoryInfo subdir in dirInfo.GetDirectories())
+            {
+                totalFile += GetFilesCount(subdir);
+            }
+            return totalFile;
+        }
         private void button8_Click(object sender, EventArgs e)
         {
             int startpoint = 0;
@@ -727,7 +741,7 @@ namespace PictureSuperMix
 
             for (int i = 0; i < 512; i++)
             {
-                Bitmap curbitmap = new System.Drawing.Bitmap(128, 80);
+                Bitmap curbitmap = new System.Drawing.Bitmap(1280, 800);
 
                 BitmapData curimageData = curbitmap.LockBits(new Rectangle(0, 0, curbitmap.Width, curbitmap.Height),
                 ImageLockMode.ReadOnly, curbitmap.PixelFormat);
@@ -789,10 +803,11 @@ namespace PictureSuperMix
 
                 curbitmap.Dispose();
 
-
+                //变换率
+                double changerate2 = 1;
                 if (changepoint > 0)
                 {
-                    startpoint = startpoint + 1;
+                    startpoint = startpoint + changerate2;
                     if (startpoint >= 255)
                     {
                         startpoint = 255;
@@ -801,7 +816,7 @@ namespace PictureSuperMix
                 }
                 else
                 {
-                    startpoint = startpoint - 1;
+                    startpoint = startpoint - changerate2;
                     if (startpoint <= 0)
                     {
                         startpoint = 0;
@@ -1104,7 +1119,7 @@ namespace PictureSuperMix
                 }
             };
 
-            for (int i = 0; i < 513; i++)
+            for (int i = 0; i < 2500; i++)
             {
                 Bitmap curbitmap = new System.Drawing.Bitmap(1280, 800);
 
@@ -1216,7 +1231,7 @@ namespace PictureSuperMix
 
                 if (changepoint > 0)
                 {
-                    startpoint = startpoint + 1;
+                    startpoint = startpoint + 0.25;
                     if (startpoint >= 255)
                     {
                         startpoint = 255;
@@ -1225,12 +1240,272 @@ namespace PictureSuperMix
                 }
                 else
                 {
-                    startpoint = startpoint - 1;
+                    startpoint = startpoint - 0.25;
                     if (startpoint <= 0)
                     {
                         startpoint = 0;
                         changepoint = 1;
                     }
+                }
+            }
+        }
+
+        private void button12_Click(object sender, EventArgs e)
+        {
+
+
+            for (int i = 0; i < 10; i++)
+            {
+                Bitmap curbitmap = new System.Drawing.Bitmap(1280, 800);
+
+                BitmapData curimageData = curbitmap.LockBits(new Rectangle(0, 0, curbitmap.Width, curbitmap.Height),
+                ImageLockMode.ReadOnly, curbitmap.PixelFormat);
+
+                //###########################left###########################//
+                unsafe
+                {
+                    //Count red and black pixels
+                    try
+                    {
+                        UnmanagedImage img = new UnmanagedImage(curimageData);
+
+                        int height = img.Height;
+                        int width = img.Width;
+                        int pixelSize = (img.PixelFormat == PixelFormat.Format24bppRgb) ? 3 : 4;
+                        byte* p = (byte*)img.ImageData.ToPointer();
+
+
+                        // for each line
+                        for (int y = 0; y < height; y++)
+                        {
+
+                            // for each pixel
+                            for (int x = 0; x < width; x++, p += pixelSize)
+                            {
+
+
+
+                                if (x>480 && x<544)
+                                {
+                                    p[RGB.R] = (byte)70;
+                                    p[RGB.G] = (byte)70;
+                                    p[RGB.B] = (byte)70;
+                                }
+                                else if (x >= 544 && x < 608)
+                                {
+                                    p[RGB.R] = (byte)71;
+                                    p[RGB.G] = (byte)71;
+                                    p[RGB.B] = (byte)71;
+                                }
+                                else if (x >= 608)
+                                {
+                                    p[RGB.R] = (byte)72;
+                                    p[RGB.G] = (byte)72;
+                                    p[RGB.B] = (byte)72;
+                                }
+
+
+                            }
+
+                        }
+
+                    }
+                    finally
+                    {
+                        curbitmap.UnlockBits(curimageData); //Unlock
+                    }
+
+                }
+                string sdf = String.Format("{0:D4}", i);
+
+
+                string zzzzz = picdic + "\\dd" + sdf + ".bmp";
+
+
+                curbitmap.Save(zzzzz, System.Drawing.Imaging.ImageFormat.Bmp);
+
+                curbitmap.Dispose();
+
+
+            }
+        }
+
+        private void button13_Click(object sender, EventArgs e)
+        {
+
+            bool gflag = true;
+
+            for (int i = 0; i < 150; i++)
+            {
+                Bitmap curbitmap = new System.Drawing.Bitmap(1280, 800);
+
+                BitmapData curimageData = curbitmap.LockBits(new Rectangle(0, 0, curbitmap.Width, curbitmap.Height),
+                ImageLockMode.ReadOnly, curbitmap.PixelFormat);
+
+                //###########################left###########################//
+                unsafe
+                {
+                    //Count red and black pixels
+                    try
+                    {
+                        UnmanagedImage img = new UnmanagedImage(curimageData);
+
+                        int height = img.Height;
+                        int width = img.Width;
+                        int pixelSize = (img.PixelFormat == PixelFormat.Format24bppRgb) ? 3 : 4;
+                        byte* p = (byte*)img.ImageData.ToPointer();
+
+
+                        // for each line
+                        for (int y = 0; y < height; y++)
+                        {
+
+                            // for each pixel
+                            for (int x = 0; x < width; x++, p += pixelSize)
+                            {
+
+                                if (gflag)
+                                {
+                                    p[RGB.R] = (byte)70;
+                                    p[RGB.G] = (byte)70;
+                                    p[RGB.B] = (byte)70;
+                                }
+                                else
+                                {
+                                    if (x > 480 && x < 544)
+                                    {
+                                        p[RGB.R] = (byte)70;
+                                        p[RGB.G] = (byte)70;
+                                        p[RGB.B] = (byte)70;
+                                    }
+                                    else if (x >= 544 && x < 608)
+                                    {
+                                        p[RGB.R] = (byte)71;
+                                        p[RGB.G] = (byte)71;
+                                        p[RGB.B] = (byte)71;
+                                    }
+                                    else if (x >= 638 && x<676)
+                                    {
+                                        p[RGB.R] = (byte)75;
+                                        p[RGB.G] = (byte)75;
+                                        p[RGB.B] = (byte)75;
+                                    }
+                                    else
+                                    {
+                                        p[RGB.R] = (byte)70;
+                                        p[RGB.G] = (byte)70;
+                                        p[RGB.B] = (byte)70;
+                                    }
+                                }
+
+                            }
+
+                        }
+
+                    }
+                    finally
+                    {
+                        curbitmap.UnlockBits(curimageData); //Unlock
+                    }
+
+                }
+                string sdf = String.Format("{0:D4}", i);
+
+
+                string zzzzz = picdic + "\\dd" + sdf + ".bmp";
+
+
+                curbitmap.Save(zzzzz, System.Drawing.Imaging.ImageFormat.Bmp);
+
+                curbitmap.Dispose();
+
+                if (gflag)
+                {
+                    gflag = false;
+                }
+                else
+                {
+                    gflag = true;
+                }
+            }
+        }
+
+        private void button14_Click(object sender, EventArgs e)
+        {
+            bool gflag = true;
+
+            for (int i = 0; i < 150; i++)
+            {
+                Bitmap curbitmap = new System.Drawing.Bitmap(1280, 800);
+
+                BitmapData curimageData = curbitmap.LockBits(new Rectangle(0, 0, curbitmap.Width, curbitmap.Height),
+                ImageLockMode.ReadOnly, curbitmap.PixelFormat);
+
+                //###########################left###########################//
+                unsafe
+                {
+                    //Count red and black pixels
+                    try
+                    {
+                        UnmanagedImage img = new UnmanagedImage(curimageData);
+
+                        int height = img.Height;
+                        int width = img.Width;
+                        int pixelSize = (img.PixelFormat == PixelFormat.Format24bppRgb) ? 3 : 4;
+                        byte* p = (byte*)img.ImageData.ToPointer();
+
+
+                        // for each line
+                        for (int y = 0; y < height; y++)
+                        {
+
+                            // for each pixel
+                            for (int x = 0; x < width; x++, p += pixelSize)
+                            {
+
+                                if (gflag)
+                                {
+                                    p[RGB.R] = (byte)75;
+                                    p[RGB.G] = (byte)75;
+                                    p[RGB.B] = (byte)75;
+                                }
+                                else
+                                {
+                                    p[RGB.R] = (byte)74;
+                                    p[RGB.G] = (byte)74;
+                                    p[RGB.B] = (byte)74;
+                                }
+
+
+
+                            }
+
+                        }
+
+                    }
+                    finally
+                    {
+                        curbitmap.UnlockBits(curimageData); //Unlock
+                    }
+
+                }
+                string sdf = String.Format("{0:D4}", i);
+
+
+                string zzzzz = picdic + "\\dd" + sdf + ".gif";
+
+
+                curbitmap.Save(zzzzz, System.Drawing.Imaging.ImageFormat.Jpeg);
+
+                curbitmap.Dispose();
+
+                if (gflag)
+                {
+                    gflag = false;
+                }
+                else
+                {
+                    gflag = true;
                 }
             }
         }

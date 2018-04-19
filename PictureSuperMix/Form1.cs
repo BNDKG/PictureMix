@@ -66,6 +66,7 @@ namespace PictureSuperMix
         string SourcePathBlack; 
         string SourcePathWhite;
         string SourcePathColor;
+        string SourcePathPictoVideo;
         string picdic ;
 
         private void button1_Click(object sender, EventArgs e)
@@ -240,6 +241,7 @@ namespace PictureSuperMix
             SourcePathBlack = OriPath + "\\pics\\BlackPic.jpg";
             SourcePathWhite = OriPath + "\\pics\\WhitePic.jpg";
             SourcePathColor = OriPath + "\\pics\\ColorPic.png";
+            SourcePathPictoVideo = OriPath + "\\pics\\ColorPictoVideo.png";
 
             picdic = OriPath + "\\image_input";
 
@@ -1496,6 +1498,38 @@ namespace PictureSuperMix
 
 
                 curbitmap.Save(zzzzz, System.Drawing.Imaging.ImageFormat.Jpeg);
+
+                curbitmap.Dispose();
+
+                if (gflag)
+                {
+                    gflag = false;
+                }
+                else
+                {
+                    gflag = true;
+                }
+            }
+        }
+
+        private void button15_Click(object sender, EventArgs e)
+        {
+            bool gflag = true;
+
+            for (int i = 0; i < 150; i++)
+            {
+                //Bitmap curbitmap = new System.Drawing.Bitmap(1280, 800);
+
+                Bitmap curbitmap = new Bitmap(Image.FromFile(SourcePathPictoVideo));
+
+
+                string sdf = String.Format("{0:D4}", i);
+
+
+                string zzzzz = picdic + "\\dd" + sdf + ".bmp";
+
+
+                curbitmap.Save(zzzzz, System.Drawing.Imaging.ImageFormat.Bmp);
 
                 curbitmap.Dispose();
 

@@ -564,6 +564,8 @@ namespace PictureSuperMix
         {
             //和ffmpeg差不多，不能一帧帧超高清显示，附一个ffmpeg代码
             //ffmpeg -i E:\image_input\dd%04d.bmp -r 60 -s 1920x1080 -b:v 20000k  E:\zmctest222.avi
+            //将input文件夹中的视频全部生成视频
+
 
             int width = 1280;
             int height = 800;
@@ -636,103 +638,6 @@ namespace PictureSuperMix
                 totalFile += GetFilesCount(subdir);
             }
             return totalFile;
-        }
-        private void button8_Click(object sender, EventArgs e)
-        {
-            int startpoint = 0;
-            int changepoint = 1;
-
-            for (int i = 0; i < 300; i++)
-            {
-                Bitmap curbitmap = new System.Drawing.Bitmap(1280, 800);
-
-                BitmapData curimageData = curbitmap.LockBits(new Rectangle(0, 0, curbitmap.Width, curbitmap.Height),
-                ImageLockMode.ReadOnly, curbitmap.PixelFormat);
-
-                //###########################left###########################//
-                unsafe
-                {
-                    //Count red and black pixels
-                    try
-                    {
-                        UnmanagedImage img = new UnmanagedImage(curimageData);
-
-                        int height = img.Height;
-                        int width = img.Width;
-                        int pixelSize = (img.PixelFormat == PixelFormat.Format24bppRgb) ? 3 : 4;
-                        byte* p = (byte*)img.ImageData.ToPointer();
-
-                        double ylevel = ((double)img.Height) / board_adj.GetLength(0);
-                        double xlevel = ((double)img.Width) / board_adj.GetLength(1);
-
-                        int yall = board_adj.GetLength(0);
-                        int xall = board_adj.GetLength(1);
-
-
-                        int cur_value = startpoint;
-                        int cur_changpoint = changepoint;
-
-
-                        // for each line
-                        for (int y = 0; y < height; y++)
-                        {
-                            cur_value = startpoint;
-                            cur_changpoint = changepoint;
-                            // for each pixel
-                            for (int x = 0; x < width; x++, p += pixelSize)
-                            {
-
-
-                                p[RGB.R] =128;
-                                p[RGB.G] =128;
-                                p[RGB.B] =128;
-     
-
-                            }
-
-                        }
-
-                    }
-                    finally
-                    {
-                        curbitmap.UnlockBits(curimageData); //Unlock
-                    }
-
-                }
-                string sdf = String.Format("{0:D4}", i);
-
-
-                string zzzzz = picdic+"\\dd" + sdf + ".bmp";
-
-
-                curbitmap.Save(zzzzz, System.Drawing.Imaging.ImageFormat.Bmp);
-
-                curbitmap.Dispose();
-
-
-                if (changepoint > 0)
-                {
-                    startpoint = startpoint + 1;
-                    if (startpoint >= 255)
-                    {
-                        startpoint = 255;
-                        changepoint = -1;
-                    }
-                }
-                else
-                {
-                    startpoint = startpoint - 1;
-                    if (startpoint <= 0)
-                    {
-                        startpoint = 0;
-                        changepoint = 1;
-                    }
-                }
-                //startpoint += 1;
-
-
-
-            }
         }
 
         private void button9_Click(object sender, EventArgs e)
@@ -830,7 +735,7 @@ namespace PictureSuperMix
 
         private void button10_Click(object sender, EventArgs e)
         {
-
+            //生成带有位置信息的视频用于标定位置
             int[,,] fontnum = new int[,,] {
                 {
                 { 0,1,1,0,0 },
@@ -1049,6 +954,9 @@ namespace PictureSuperMix
 
         private void button11_Click(object sender, EventArgs e)
         {
+            //生成带有灰度信息的视频用于标定灰度级
+
+
             double startpoint = 0;
             int changepoint = 1;
 
@@ -1254,7 +1162,7 @@ namespace PictureSuperMix
 
         private void button12_Click(object sender, EventArgs e)
         {
-
+            //把画面分为左中右
 
             for (int i = 0; i < 10; i++)
             {
@@ -1434,6 +1342,8 @@ namespace PictureSuperMix
 
         private void button14_Click(object sender, EventArgs e)
         {
+            //用于生成来回两个灰度级跳变的视频以发现是否系统中存在灰度级的变化
+
             bool gflag = true;
 
             for (int i = 0; i < 150; i++)
@@ -1542,6 +1452,11 @@ namespace PictureSuperMix
                     gflag = true;
                 }
             }
+        }
+
+        private void groupBox1_Enter(object sender, EventArgs e)
+        {
+
         }
     }
 }

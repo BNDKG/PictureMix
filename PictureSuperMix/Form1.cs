@@ -1458,5 +1458,95 @@ namespace PictureSuperMix
         {
 
         }
+
+        private void aforgereadtest()
+        {
+            //读取图片
+            Bitmap sourcepic = new Bitmap(Image.FromFile("SourceVideoChange.jpg"));
+
+            // 生成视频生成读取器
+            VideoFileReader readerzzz = new VideoFileReader();
+            // 打开视频
+            readerzzz.Open("SourceVideoChange.mp4");
+
+            // 生成视频写入器
+            VideoFileWriter writerzzz = new VideoFileWriter();
+            // 新建一个视频(帧必须是二的倍数)
+            writerzzz.Open("testoutput.avi", (sourcepic.Width/2)*2, (sourcepic.Height/2)*2, readerzzz.FrameRate, VideoCodec.MPEG4, 25000000);
+
+
+            // 对视频的所有帧进行操作
+            for (int i = 0; i < (readerzzz.FrameCount-1); i++)
+            {
+                //载入当前帧动画
+                Bitmap curbitmapsource = readerzzz.ReadVideoFrame();
+
+
+                //载入背景
+                Bitmap curbitmap = sourcepic.Clone(new Rectangle(0, 0, (sourcepic.Width / 2) * 2, (sourcepic.Height / 2) * 2), sourcepic.PixelFormat);
+
+
+                Bitmap Videochange = new Bitmap(curbitmapsource, curbitmap.Width, curbitmap.Height);
+
+                BitmapData curimageData = curbitmap.LockBits(new Rectangle(0, 0, curbitmap.Width, curbitmap.Height),
+                ImageLockMode.ReadOnly, curbitmap.PixelFormat);
+
+
+                unsafe
+                {
+                    //Count red and black pixels
+                    try
+                    {
+                        UnmanagedImage img = new UnmanagedImage(curimageData);
+
+                        int height = img.Height;
+                        int width = img.Width;
+                        int pixelSize = (img.PixelFormat == PixelFormat.Format24bppRgb) ? 3 : 4;
+                        byte* p = (byte*)img.ImageData.ToPointer();
+
+
+                        // for each line
+                        for (int y = 0; y < height; y++)
+                        {
+
+                            // for each pixel
+                            for (int x = 0; x < width; x++, p += pixelSize)
+                            {
+
+                                p[RGB.R] = (byte)(p[RGB.R] * 0.5);
+                                p[RGB.G] = (byte)(p[RGB.G] * 0.5);
+                                p[RGB.B] = (byte)(p[RGB.B] * 0.5);
+
+                            }
+
+                        }
+
+                    }
+                    finally
+                    {
+                        curbitmap.UnlockBits(curimageData); //Unlock
+                    }
+
+                }
+
+                //写入当前帧
+                writerzzz.WriteVideoFrame(curbitmap);
+
+                // 释放当前操作内存
+                curbitmap.Dispose();
+                curbitmapsource.Dispose();
+
+            }
+            readerzzz.Close();
+
+            writerzzz.Close();
+
+
+        }
+
+        private void button8_Click(object sender, EventArgs e)
+        {
+            aforgereadtest();
+        }
     }
 }

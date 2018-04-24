@@ -57,6 +57,7 @@
             this.label4 = new System.Windows.Forms.Label();
             this.groupBox1 = new System.Windows.Forms.GroupBox();
             this.groupBox2 = new System.Windows.Forms.GroupBox();
+            this.button8 = new System.Windows.Forms.Button();
             ((System.ComponentModel.ISupportInitialize)(this.pictureBox3)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.pictureBox4)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.pictureBox5)).BeginInit();
@@ -68,7 +69,7 @@
             // 
             // button2
             // 
-            this.button2.Location = new System.Drawing.Point(39, 251);
+            this.button2.Location = new System.Drawing.Point(53, 46);
             this.button2.Name = "button2";
             this.button2.Size = new System.Drawing.Size(110, 41);
             this.button2.TabIndex = 2;
@@ -80,7 +81,7 @@
             // 
             this.pictureBox3.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
             this.pictureBox3.Image = null;
-            this.pictureBox3.Location = new System.Drawing.Point(185, 608);
+            this.pictureBox3.Location = new System.Drawing.Point(199, 403);
             this.pictureBox3.Name = "pictureBox3";
             this.pictureBox3.Size = new System.Drawing.Size(263, 126);
             this.pictureBox3.SizeMode = System.Windows.Forms.PictureBoxSizeMode.StretchImage;
@@ -93,7 +94,7 @@
             // 
             this.pictureBox4.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
             this.pictureBox4.Image = null;
-            this.pictureBox4.Location = new System.Drawing.Point(454, 608);
+            this.pictureBox4.Location = new System.Drawing.Point(468, 403);
             this.pictureBox4.Name = "pictureBox4";
             this.pictureBox4.Size = new System.Drawing.Size(263, 126);
             this.pictureBox4.SizeMode = System.Windows.Forms.PictureBoxSizeMode.StretchImage;
@@ -104,7 +105,7 @@
             // 
             // button5
             // 
-            this.button5.Location = new System.Drawing.Point(58, 654);
+            this.button5.Location = new System.Drawing.Point(72, 449);
             this.button5.Name = "button5";
             this.button5.Size = new System.Drawing.Size(103, 41);
             this.button5.TabIndex = 16;
@@ -116,7 +117,7 @@
             // 
             this.pictureBox5.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
             this.pictureBox5.Image = null;
-            this.pictureBox5.Location = new System.Drawing.Point(723, 608);
+            this.pictureBox5.Location = new System.Drawing.Point(737, 403);
             this.pictureBox5.Name = "pictureBox5";
             this.pictureBox5.Size = new System.Drawing.Size(263, 126);
             this.pictureBox5.SizeMode = System.Windows.Forms.PictureBoxSizeMode.StretchImage;
@@ -137,7 +138,7 @@
             // 
             // button7
             // 
-            this.button7.Location = new System.Drawing.Point(466, 321);
+            this.button7.Location = new System.Drawing.Point(480, 116);
             this.button7.Name = "button7";
             this.button7.Size = new System.Drawing.Size(110, 52);
             this.button7.TabIndex = 19;
@@ -207,7 +208,7 @@
             // 
             // button15
             // 
-            this.button15.Location = new System.Drawing.Point(350, 320);
+            this.button15.Location = new System.Drawing.Point(364, 115);
             this.button15.Name = "button15";
             this.button15.Size = new System.Drawing.Size(110, 53);
             this.button15.TabIndex = 27;
@@ -219,7 +220,7 @@
             // 
             this.pictureBox1.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
             this.pictureBox1.Image = null;
-            this.pictureBox1.Location = new System.Drawing.Point(396, 437);
+            this.pictureBox1.Location = new System.Drawing.Point(410, 232);
             this.pictureBox1.Name = "pictureBox1";
             this.pictureBox1.Size = new System.Drawing.Size(280, 120);
             this.pictureBox1.SizeMode = System.Windows.Forms.PictureBoxSizeMode.StretchImage;
@@ -232,7 +233,7 @@
             // 
             this.pictureBox2.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
             this.pictureBox2.Image = null;
-            this.pictureBox2.Location = new System.Drawing.Point(693, 437);
+            this.pictureBox2.Location = new System.Drawing.Point(707, 232);
             this.pictureBox2.Name = "pictureBox2";
             this.pictureBox2.Size = new System.Drawing.Size(280, 120);
             this.pictureBox2.SizeMode = System.Windows.Forms.PictureBoxSizeMode.StretchImage;
@@ -362,7 +363,7 @@
             this.groupBox1.Controls.Add(this.button4);
             this.groupBox1.Controls.Add(this.button3);
             this.groupBox1.Controls.Add(this.button1);
-            this.groupBox1.Location = new System.Drawing.Point(39, 415);
+            this.groupBox1.Location = new System.Drawing.Point(53, 210);
             this.groupBox1.Name = "groupBox1";
             this.groupBox1.Size = new System.Drawing.Size(315, 161);
             this.groupBox1.TabIndex = 29;
@@ -379,18 +380,29 @@
             this.groupBox2.Controls.Add(this.button10);
             this.groupBox2.Controls.Add(this.button9);
             this.groupBox2.Controls.Add(this.button6);
-            this.groupBox2.Location = new System.Drawing.Point(742, 251);
+            this.groupBox2.Location = new System.Drawing.Point(756, 46);
             this.groupBox2.Name = "groupBox2";
             this.groupBox2.Size = new System.Drawing.Size(231, 140);
             this.groupBox2.TabIndex = 30;
             this.groupBox2.TabStop = false;
             this.groupBox2.Text = "视频生成";
             // 
+            // button8
+            // 
+            this.button8.Location = new System.Drawing.Point(517, 46);
+            this.button8.Name = "button8";
+            this.button8.Size = new System.Drawing.Size(154, 49);
+            this.button8.TabIndex = 31;
+            this.button8.Text = "button8";
+            this.button8.UseVisualStyleBackColor = true;
+            this.button8.Click += new System.EventHandler(this.button8_Click);
+            // 
             // Form1
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 12F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(1038, 839);
+            this.ClientSize = new System.Drawing.Size(1038, 551);
+            this.Controls.Add(this.button8);
             this.Controls.Add(this.groupBox2);
             this.Controls.Add(this.button5);
             this.Controls.Add(this.pictureBox5);
@@ -447,6 +459,7 @@
         private System.Windows.Forms.Label label4;
         private System.Windows.Forms.GroupBox groupBox1;
         private System.Windows.Forms.GroupBox groupBox2;
+        private System.Windows.Forms.Button button8;
     }
 }
 

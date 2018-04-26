@@ -8,6 +8,7 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 using System.IO;
+using System.Threading;
 
 using System.Drawing.Imaging;
 
@@ -1459,15 +1460,26 @@ namespace PictureSuperMix
 
         }
 
+        public float backcounter = 0;
+        public bool endflag = true;
+
+        private void multtest()
+        {
+            Thread oGetArgThread = new Thread(new ThreadStart(aforgereadtest));
+            oGetArgThread.IsBackground = true;
+            oGetArgThread.Start();
+
+        }
+
         private void aforgereadtest()
         {
             //读取图片
-            Bitmap sourcepic = new Bitmap(Image.FromFile("SourceVideoChange.jpg"));
+            Bitmap sourcepic = new Bitmap(Image.FromFile(textBox5.Text));
 
             // 生成视频生成读取器
             VideoFileReader readerzzz = new VideoFileReader();
             // 打开视频
-            readerzzz.Open("SourceVideoChange.mp4");
+            readerzzz.Open(textBox6.Text);
 
             // 生成视频写入器
             VideoFileWriter writerzzz = new VideoFileWriter();
@@ -1476,8 +1488,10 @@ namespace PictureSuperMix
 
 
             // 对视频的所有帧进行操作
-            for (int i = 0; i < (readerzzz.FrameCount-1); i++)
+            for (int i = 0; i < (readerzzz.FrameCount-1) && endflag==false; i++)
             {
+                backcounter = (((float)i)/(readerzzz.FrameCount - 1))*100;
+
                 //载入当前帧动画
                 Bitmap curbitmapsource = readerzzz.ReadVideoFrame();
 
@@ -1553,6 +1567,7 @@ namespace PictureSuperMix
                 curbitmapsource.Dispose();
                 Videochange.Dispose();
 
+
             }
             readerzzz.Close();
 
@@ -1560,11 +1575,87 @@ namespace PictureSuperMix
             //释放内存
             sourcepic.Dispose();
 
+            endflag = true;
+
         }
 
         private void button8_Click(object sender, EventArgs e)
         {
-            aforgereadtest();
+            if (endflag)
+            {
+
+                endflag = false;
+
+                timer1.Start();
+                multtest();
+                button8.Text = "停止";
+            }
+            else
+            {
+                endflag = true;
+                button8.Text = "视频效果转换";
+            }
+        }
+
+
+        private void timer1_Tick(object sender, EventArgs e)
+        {
+
+            this.progressBar1.Value = (int)backcounter;
+            this.progressBar1.Visible = true;
+
+            if (endflag)
+            {
+                this.progressBar1.Visible = false;
+                
+                timer1.Stop();
+                button8.Text = "视频效果转换";
+            }
+
+        }
+
+        private void textBox6_DragDrop(object sender, DragEventArgs e)
+        {
+            string path = ((System.Array)e.Data.GetData(DataFormats.FileDrop)).GetValue(0).ToString();
+            textBox6.Text = path; //将获取到的完整路径赋值到textBox1
+        }
+
+        private void textBox5_DragDrop(object sender, DragEventArgs e)
+        {
+            string path = ((System.Array)e.Data.GetData(DataFormats.FileDrop)).GetValue(0).ToString();
+            textBox5.Text = path; //将获取到的完整路径赋值到textBox1
+        }
+
+        private void textBox5_DragEnter(object sender, DragEventArgs e)
+        {
+            if (e.Data.GetDataPresent(DataFormats.FileDrop)) e.Effect = DragDropEffects.Link;
+            else e.Effect = DragDropEffects.None;
+
+
+        }
+
+        private void textBox6_DragEnter(object sender, DragEventArgs e)
+        {
+            if (e.Data.GetDataPresent(DataFormats.FileDrop)) e.Effect = DragDropEffects.Link;
+            else e.Effect = DragDropEffects.None;
+
+        }
+
+        private void label6_Click(object sender, EventArgs e)
+        {
+
+        }
+
+        private void textBox5_DragDrop_1(object sender, DragEventArgs e)
+        {
+            string path = ((System.Array)e.Data.GetData(DataFormats.FileDrop)).GetValue(0).ToString();
+            textBox5.Text = path; 
+        }
+
+        private void textBox6_DragDrop_1(object sender, DragEventArgs e)
+        {
+            string path = ((System.Array)e.Data.GetData(DataFormats.FileDrop)).GetValue(0).ToString();
+            textBox6.Text = path; 
         }
     }
 }

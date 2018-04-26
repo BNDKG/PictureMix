@@ -28,6 +28,7 @@
         /// </summary>
         private void InitializeComponent()
         {
+            this.components = new System.ComponentModel.Container();
             this.button2 = new System.Windows.Forms.Button();
             this.pictureBox3 = new AForge.Controls.PictureBox();
             this.pictureBox4 = new AForge.Controls.PictureBox();
@@ -58,6 +59,12 @@
             this.groupBox1 = new System.Windows.Forms.GroupBox();
             this.groupBox2 = new System.Windows.Forms.GroupBox();
             this.button8 = new System.Windows.Forms.Button();
+            this.progressBar1 = new System.Windows.Forms.ProgressBar();
+            this.timer1 = new System.Windows.Forms.Timer(this.components);
+            this.textBox5 = new System.Windows.Forms.TextBox();
+            this.textBox6 = new System.Windows.Forms.TextBox();
+            this.label5 = new System.Windows.Forms.Label();
+            this.label6 = new System.Windows.Forms.Label();
             ((System.ComponentModel.ISupportInitialize)(this.pictureBox3)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.pictureBox4)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.pictureBox5)).BeginInit();
@@ -69,7 +76,7 @@
             // 
             // button2
             // 
-            this.button2.Location = new System.Drawing.Point(53, 46);
+            this.button2.Location = new System.Drawing.Point(12, 31);
             this.button2.Name = "button2";
             this.button2.Size = new System.Drawing.Size(110, 41);
             this.button2.TabIndex = 2;
@@ -138,9 +145,9 @@
             // 
             // button7
             // 
-            this.button7.Location = new System.Drawing.Point(480, 116);
+            this.button7.Location = new System.Drawing.Point(156, 70);
             this.button7.Name = "button7";
-            this.button7.Size = new System.Drawing.Size(110, 52);
+            this.button7.Size = new System.Drawing.Size(64, 52);
             this.button7.TabIndex = 19;
             this.button7.Text = "视频生成";
             this.button7.UseVisualStyleBackColor = true;
@@ -180,7 +187,7 @@
             // 
             this.button12.Location = new System.Drawing.Point(16, 92);
             this.button12.Name = "button12";
-            this.button12.Size = new System.Drawing.Size(134, 30);
+            this.button12.Size = new System.Drawing.Size(64, 30);
             this.button12.TabIndex = 24;
             this.button12.Text = "肉眼识别判断";
             this.button12.UseVisualStyleBackColor = true;
@@ -188,9 +195,9 @@
             // 
             // button13
             // 
-            this.button13.Location = new System.Drawing.Point(156, 20);
+            this.button13.Location = new System.Drawing.Point(86, 92);
             this.button13.Name = "button13";
-            this.button13.Size = new System.Drawing.Size(64, 48);
+            this.button13.Size = new System.Drawing.Size(64, 30);
             this.button13.TabIndex = 25;
             this.button13.Text = "变化测试";
             this.button13.UseVisualStyleBackColor = true;
@@ -198,7 +205,7 @@
             // 
             // button14
             // 
-            this.button14.Location = new System.Drawing.Point(156, 74);
+            this.button14.Location = new System.Drawing.Point(156, 20);
             this.button14.Name = "button14";
             this.button14.Size = new System.Drawing.Size(64, 48);
             this.button14.TabIndex = 26;
@@ -208,7 +215,7 @@
             // 
             // button15
             // 
-            this.button15.Location = new System.Drawing.Point(364, 115);
+            this.button15.Location = new System.Drawing.Point(12, 81);
             this.button15.Name = "button15";
             this.button15.Size = new System.Drawing.Size(110, 53);
             this.button15.TabIndex = 27;
@@ -220,7 +227,7 @@
             // 
             this.pictureBox1.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
             this.pictureBox1.Image = null;
-            this.pictureBox1.Location = new System.Drawing.Point(410, 232);
+            this.pictureBox1.Location = new System.Drawing.Point(410, 249);
             this.pictureBox1.Name = "pictureBox1";
             this.pictureBox1.Size = new System.Drawing.Size(280, 120);
             this.pictureBox1.SizeMode = System.Windows.Forms.PictureBoxSizeMode.StretchImage;
@@ -233,7 +240,7 @@
             // 
             this.pictureBox2.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
             this.pictureBox2.Image = null;
-            this.pictureBox2.Location = new System.Drawing.Point(707, 232);
+            this.pictureBox2.Location = new System.Drawing.Point(707, 249);
             this.pictureBox2.Name = "pictureBox2";
             this.pictureBox2.Size = new System.Drawing.Size(280, 120);
             this.pictureBox2.SizeMode = System.Windows.Forms.PictureBoxSizeMode.StretchImage;
@@ -363,7 +370,7 @@
             this.groupBox1.Controls.Add(this.button4);
             this.groupBox1.Controls.Add(this.button3);
             this.groupBox1.Controls.Add(this.button1);
-            this.groupBox1.Location = new System.Drawing.Point(53, 210);
+            this.groupBox1.Location = new System.Drawing.Point(53, 227);
             this.groupBox1.Name = "groupBox1";
             this.groupBox1.Size = new System.Drawing.Size(315, 161);
             this.groupBox1.TabIndex = 29;
@@ -380,7 +387,8 @@
             this.groupBox2.Controls.Add(this.button10);
             this.groupBox2.Controls.Add(this.button9);
             this.groupBox2.Controls.Add(this.button6);
-            this.groupBox2.Location = new System.Drawing.Point(756, 46);
+            this.groupBox2.Controls.Add(this.button7);
+            this.groupBox2.Location = new System.Drawing.Point(756, 22);
             this.groupBox2.Name = "groupBox2";
             this.groupBox2.Size = new System.Drawing.Size(231, 140);
             this.groupBox2.TabIndex = 30;
@@ -389,19 +397,76 @@
             // 
             // button8
             // 
-            this.button8.Location = new System.Drawing.Point(517, 46);
+            this.button8.Location = new System.Drawing.Point(368, 75);
             this.button8.Name = "button8";
-            this.button8.Size = new System.Drawing.Size(154, 49);
+            this.button8.Size = new System.Drawing.Size(226, 53);
             this.button8.TabIndex = 31;
-            this.button8.Text = "button8";
+            this.button8.Text = "视频效果转换";
             this.button8.UseVisualStyleBackColor = true;
             this.button8.Click += new System.EventHandler(this.button8_Click);
             // 
+            // progressBar1
+            // 
+            this.progressBar1.Location = new System.Drawing.Point(368, 134);
+            this.progressBar1.Name = "progressBar1";
+            this.progressBar1.Size = new System.Drawing.Size(226, 10);
+            this.progressBar1.Step = 1;
+            this.progressBar1.TabIndex = 32;
+            // 
+            // timer1
+            // 
+            this.timer1.Tick += new System.EventHandler(this.timer1_Tick);
+            // 
+            // textBox5
+            // 
+            this.textBox5.AllowDrop = true;
+            this.textBox5.Location = new System.Drawing.Point(128, 168);
+            this.textBox5.Name = "textBox5";
+            this.textBox5.Size = new System.Drawing.Size(848, 21);
+            this.textBox5.TabIndex = 33;
+            this.textBox5.DragDrop += new System.Windows.Forms.DragEventHandler(this.textBox5_DragDrop_1);
+            this.textBox5.DragEnter += new System.Windows.Forms.DragEventHandler(this.textBox5_DragEnter);
+            // 
+            // textBox6
+            // 
+            this.textBox6.AllowDrop = true;
+            this.textBox6.Location = new System.Drawing.Point(128, 200);
+            this.textBox6.Name = "textBox6";
+            this.textBox6.Size = new System.Drawing.Size(848, 21);
+            this.textBox6.TabIndex = 34;
+            this.textBox6.DragDrop += new System.Windows.Forms.DragEventHandler(this.textBox6_DragDrop_1);
+            this.textBox6.DragEnter += new System.Windows.Forms.DragEventHandler(this.textBox6_DragEnter);
+            // 
+            // label5
+            // 
+            this.label5.AutoSize = true;
+            this.label5.Location = new System.Drawing.Point(51, 171);
+            this.label5.Name = "label5";
+            this.label5.Size = new System.Drawing.Size(53, 12);
+            this.label5.TabIndex = 35;
+            this.label5.Text = "图片位置";
+            // 
+            // label6
+            // 
+            this.label6.AutoSize = true;
+            this.label6.Location = new System.Drawing.Point(51, 200);
+            this.label6.Name = "label6";
+            this.label6.Size = new System.Drawing.Size(53, 12);
+            this.label6.TabIndex = 36;
+            this.label6.Text = "效果位置";
+            this.label6.Click += new System.EventHandler(this.label6_Click);
+            // 
             // Form1
             // 
+            this.AllowDrop = true;
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 12F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(1038, 551);
+            this.Controls.Add(this.label6);
+            this.Controls.Add(this.label5);
+            this.Controls.Add(this.textBox6);
+            this.Controls.Add(this.textBox5);
+            this.Controls.Add(this.progressBar1);
             this.Controls.Add(this.button8);
             this.Controls.Add(this.groupBox2);
             this.Controls.Add(this.button5);
@@ -411,7 +476,6 @@
             this.Controls.Add(this.groupBox1);
             this.Controls.Add(this.button15);
             this.Controls.Add(this.pictureBox2);
-            this.Controls.Add(this.button7);
             this.Controls.Add(this.pictureBox1);
             this.Controls.Add(this.button2);
             this.Name = "Form1";
@@ -426,6 +490,7 @@
             this.groupBox1.PerformLayout();
             this.groupBox2.ResumeLayout(false);
             this.ResumeLayout(false);
+            this.PerformLayout();
 
         }
 
@@ -460,6 +525,12 @@
         private System.Windows.Forms.GroupBox groupBox1;
         private System.Windows.Forms.GroupBox groupBox2;
         private System.Windows.Forms.Button button8;
+        private System.Windows.Forms.ProgressBar progressBar1;
+        private System.Windows.Forms.Timer timer1;
+        private System.Windows.Forms.TextBox textBox5;
+        private System.Windows.Forms.TextBox textBox6;
+        private System.Windows.Forms.Label label5;
+        private System.Windows.Forms.Label label6;
     }
 }
 

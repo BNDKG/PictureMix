@@ -1485,8 +1485,16 @@ namespace PictureSuperMix
                 //载入背景
                 Bitmap curbitmap = sourcepic.Clone(new Rectangle(0, 0, (sourcepic.Width / 2) * 2, (sourcepic.Height / 2) * 2), sourcepic.PixelFormat);
 
+                //模糊化
+                Bitmap Videochangebuf = new Bitmap(curbitmapsource, 196, 128);
 
-                Bitmap Videochange = new Bitmap(curbitmapsource, curbitmap.Width, curbitmap.Height);
+                //投影变化
+                Bitmap Videochange = new Bitmap(Videochangebuf, curbitmap.Width, curbitmap.Height);
+
+
+
+                BitmapData curimageData2 = Videochange.LockBits(new Rectangle(0, 0, Videochange.Width, Videochange.Height),
+                ImageLockMode.ReadOnly, Videochange.PixelFormat);
 
                 BitmapData curimageData = curbitmap.LockBits(new Rectangle(0, 0, curbitmap.Width, curbitmap.Height),
                 ImageLockMode.ReadOnly, curbitmap.PixelFormat);
@@ -1494,7 +1502,6 @@ namespace PictureSuperMix
 
                 unsafe
                 {
-                    //Count red and black pixels
                     try
                     {
                         UnmanagedImage img = new UnmanagedImage(curimageData);
@@ -1504,18 +1511,27 @@ namespace PictureSuperMix
                         int pixelSize = (img.PixelFormat == PixelFormat.Format24bppRgb) ? 3 : 4;
                         byte* p = (byte*)img.ImageData.ToPointer();
 
+                        UnmanagedImage img2 = new UnmanagedImage(curimageData2);
+
+                        int height2 = img2.Height;
+                        int width2 = img2.Width;
+                        int pixelSize2 = (img2.PixelFormat == PixelFormat.Format24bppRgb) ? 3 : 4;
+                        byte* p2 = (byte*)img2.ImageData.ToPointer();
+
+
 
                         // for each line
                         for (int y = 0; y < height; y++)
                         {
 
                             // for each pixel
-                            for (int x = 0; x < width; x++, p += pixelSize)
+                            for (int x = 0; x < width; x++, p += pixelSize,p2+= pixelSize2)
                             {
 
-                                p[RGB.R] = (byte)(p[RGB.R] * 0.5);
-                                p[RGB.G] = (byte)(p[RGB.G] * 0.5);
-                                p[RGB.B] = (byte)(p[RGB.B] * 0.5);
+                                float dd = ((float)p2[RGB.R]) / 255;
+                                p[RGB.R] = (byte)(p[RGB.R] * ((0.5 + dd) / 1.5));
+                                p[RGB.G] = (byte)(p[RGB.G] * ((0.5 + dd) / 1.5));
+                                p[RGB.B] = (byte)(p[RGB.B] * ((0.5 + dd) / 1.5));
 
                             }
 
@@ -1535,12 +1551,14 @@ namespace PictureSuperMix
                 // 释放当前操作内存
                 curbitmap.Dispose();
                 curbitmapsource.Dispose();
+                Videochange.Dispose();
 
             }
             readerzzz.Close();
 
             writerzzz.Close();
-
+            //释放内存
+            sourcepic.Dispose();
 
         }
 

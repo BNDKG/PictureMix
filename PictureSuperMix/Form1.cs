@@ -1431,8 +1431,8 @@ namespace PictureSuperMix
             {
                 //Bitmap curbitmap = new System.Drawing.Bitmap(1280, 800);
 
-                Bitmap curbitmap = new Bitmap(Image.FromFile(SourcePathPictoVideo));
-
+                //Bitmap curbitmap = new Bitmap(Image.FromFile(SourcePathPictoVideo));
+                Bitmap curbitmap = new Bitmap(Image.FromFile(textBox5.Text));
 
                 string sdf = String.Format("{0:D4}", i);
 
@@ -1463,8 +1463,13 @@ namespace PictureSuperMix
         public float backcounter = 0;
         public bool endflag = true;
 
+        public float shadowpercent;
+
         private void multtest()
         {
+            shadowpercent = (float)trackBar1.Value / 10;
+
+
             Thread oGetArgThread = new Thread(new ThreadStart(aforgereadtest));
             oGetArgThread.IsBackground = true;
             oGetArgThread.Start();
@@ -1472,7 +1477,8 @@ namespace PictureSuperMix
         }
 
         private void aforgereadtest()
-        {
+        {            
+
             //读取图片
             Bitmap sourcepic = new Bitmap(Image.FromFile(textBox5.Text));
 
@@ -1485,6 +1491,7 @@ namespace PictureSuperMix
             VideoFileWriter writerzzz = new VideoFileWriter();
             // 新建一个视频(帧必须是二的倍数)
             writerzzz.Open("testoutput.avi", (sourcepic.Width/2)*2, (sourcepic.Height/2)*2, readerzzz.FrameRate, VideoCodec.MPEG4, 25000000);
+
 
 
             // 对视频的所有帧进行操作
@@ -1543,9 +1550,11 @@ namespace PictureSuperMix
                             {
 
                                 float dd = ((float)p2[RGB.R]) / 255;
-                                p[RGB.R] = (byte)(p[RGB.R] * ((0.5 + dd) / 1.5));
-                                p[RGB.G] = (byte)(p[RGB.G] * ((0.5 + dd) / 1.5));
-                                p[RGB.B] = (byte)(p[RGB.B] * ((0.5 + dd) / 1.5));
+                                float mul2 = (shadowpercent+dd)/(1+ shadowpercent);
+
+                                p[RGB.R] = (byte)(p[RGB.R] * mul2);
+                                p[RGB.G] = (byte)(p[RGB.G] * mul2);
+                                p[RGB.B] = (byte)(p[RGB.B] * mul2);
 
                             }
 
@@ -1656,6 +1665,16 @@ namespace PictureSuperMix
         {
             string path = ((System.Array)e.Data.GetData(DataFormats.FileDrop)).GetValue(0).ToString();
             textBox6.Text = path; 
+        }
+
+        private void trackBar1_Scroll(object sender, EventArgs e)
+        {
+            label7.Text= "" + trackBar1.Value;
+        }
+
+        private void label7_Click(object sender, EventArgs e)
+        {
+
         }
     }
 }

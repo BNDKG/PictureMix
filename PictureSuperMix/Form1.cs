@@ -1507,18 +1507,18 @@ namespace PictureSuperMix
                 Bitmap curbitmap = sourcepic.Clone(new Rectangle(0, 0, (sourcepic.Width / 2) * 2, (sourcepic.Height / 2) * 2), sourcepic.PixelFormat);
 
                 //模糊化
-                Bitmap Videochangebuf = new Bitmap(curbitmapsource, 196, 128);
+                Bitmap Videochangebuf = new Bitmap(curbitmapsource, 1024, 768);
 
                 //投影变化
                 Bitmap Videochange = new Bitmap(Videochangebuf, curbitmap.Width, curbitmap.Height);
 
-
-
-                BitmapData curimageData2 = Videochange.LockBits(new Rectangle(0, 0, Videochange.Width, Videochange.Height),
-                ImageLockMode.ReadOnly, Videochange.PixelFormat);
-
+                //背景图片
                 BitmapData curimageData = curbitmap.LockBits(new Rectangle(0, 0, curbitmap.Width, curbitmap.Height),
                 ImageLockMode.ReadOnly, curbitmap.PixelFormat);
+
+                //灯光图片
+                BitmapData curimageData2 = Videochange.LockBits(new Rectangle(0, 0, Videochange.Width, Videochange.Height),
+                ImageLockMode.ReadOnly, Videochange.PixelFormat);
 
 
                 unsafe
@@ -1538,6 +1538,7 @@ namespace PictureSuperMix
                         int width2 = img2.Width;
                         int pixelSize2 = (img2.PixelFormat == PixelFormat.Format24bppRgb) ? 3 : 4;
                         byte* p2 = (byte*)img2.ImageData.ToPointer();
+
 
 
 
@@ -1587,6 +1588,42 @@ namespace PictureSuperMix
             endflag = true;
 
         }
+        public double[] Sub(double[]v1, double[]v2)
+        {
+            return new[] { 
+                v1[0]-v2[0],
+                v1[1]-v2[1],
+                v1[2]-v2[2] };
+
+        }
+        public double[] Add(double[] v1, double[] v2)
+        {
+            return new[] {
+                v1[0]+v2[0],
+                v1[1]+v2[1],
+                v1[2]+v2[2] };
+
+        }
+        public double Dot(double[] v1, double[] v2)
+        {
+            return (
+                v1[0]*v2[0]+
+                v1[1]*v2[1]+
+                v1[2]*v2[2]
+                );
+
+        }
+        public double[] Normalize(double[] v)
+        {
+            double len = Math.Sqrt(v[0] * v[0] + v[1] * v[1] + v[2] * v[2]);
+            return new[]
+            {
+                v[ 0 ] / len,
+                v[ 1 ] / len,
+                v[ 2 ] / len
+            };
+        }
+
 
         private void button8_Click(object sender, EventArgs e)
         {
@@ -1675,6 +1712,106 @@ namespace PictureSuperMix
         private void label7_Click(object sender, EventArgs e)
         {
 
+        }
+
+        private void button16_Click(object sender, EventArgs e)
+        {
+
+            //读取图片
+            Bitmap curbitmap = new Bitmap(Image.FromFile(textBox5.Text));
+
+            BitmapData curimageData = curbitmap.LockBits(new Rectangle(0, 0, curbitmap.Width, curbitmap.Height),
+            ImageLockMode.ReadOnly, curbitmap.PixelFormat);
+
+            //###########################left###########################//
+            unsafe
+            {
+                //Count red and black pixels
+                try
+                {
+                    UnmanagedImage img = new UnmanagedImage(curimageData);
+
+                    int height = img.Height;
+                    int width = img.Width;
+                    int pixelSize = (img.PixelFormat == PixelFormat.Format24bppRgb) ? 3 : 4;
+                    byte* p = (byte*)img.ImageData.ToPointer();
+
+
+
+                    // for each line
+                    for (int y = 0; y < height; y++)
+                    {
+
+                        // for each pixel
+                        for (int x = 0; x < width; x++, p += pixelSize)
+                        {
+                            double lightdegree = 13;
+
+                            double[] lamp1 = new[] { 668.0, 168, lightdegree };
+                            double[] lamp2 = new[] { 684.0, 168, lightdegree };
+                            double[] lamp3 = new[] { 700.0, 168, lightdegree };
+                            double[] lamp4 = new[] { 652.0, 168, lightdegree };
+                            double[] lamp5 = new[] { 636.0, 168, lightdegree };
+                            //double[] lamp6 = new[] { 668.0, 200, 25 };
+                            //double[] lamp7 = new[] { 684.0, 168, 25 };
+                            //double[] lamp8 = new[] { 668.0, 168, 25 };
+                            //double[] lamp9 = new[] { 700.0, 168, 25 };
+
+                            double[] curposition = new[] { x, y, 0.0 };
+                            double[] unit = new[] { 0.0, 0, 1.5 };
+
+                            double[] lamp1vector = Normalize(Sub(lamp1, curposition));
+                            double[] lamp2vector = Normalize(Sub(lamp2, curposition));
+                            double[] lamp3vector = Normalize(Sub(lamp3, curposition));
+                            double[] lamp4vector = Normalize(Sub(lamp4, curposition));
+                            double[] lamp5vector = Normalize(Sub(lamp5, curposition));
+                            //double[] lamp6vector = Normalize(Sub(lamp6, curposition));
+                            //double[] lamp7vector = Normalize(Sub(lamp7, curposition));
+                            //double[] lamp8vector = Normalize(Sub(lamp8, curposition));
+                            //double[] lamp9vector = Normalize(Sub(lamp9, curposition));
+
+                            double light1 = Dot(lamp1vector, unit);
+                            double light2 = Dot(lamp2vector, unit);
+                            double light3 = Dot(lamp3vector, unit);
+                            double light4 = Dot(lamp4vector, unit);
+                            double light5 = Dot(lamp5vector, unit);
+                            //double light6 = Dot(lamp6vector, unit);
+                            //double light7 = Dot(lamp7vector, unit);
+                            //double light8 = Dot(lamp8vector, unit);
+                            //double light9 = Dot(lamp9vector, unit);
+
+                            double lightfinal = (light1 + light2 + light3 + light4 + light5) / 5;
+
+                            //p[RGB.R] = (byte)Math.Min(255, (p[RGB.R] * (light1 + light2 + light3 + light4 + light5 + light6 + light7 + light8 + light9) / 9));
+                            //p[RGB.G] = (byte)Math.Min(255, (p[RGB.G] * (light1 + light2 + light3 + light4 + light5 + light6 + light7 + light8 + light9) / 9));
+                            //p[RGB.B] = (byte)Math.Min(255, (p[RGB.B] * (light1 + light2 + light3 + light4 + light5 + light6 + light7 + light8 + light9) / 9));
+                            p[RGB.R] = (byte)Math.Min(255, (p[RGB.R] * lightfinal));
+                            p[RGB.G] = (byte)Math.Min(255, (p[RGB.G] * lightfinal));
+                            p[RGB.B] = (byte)Math.Min(255, (p[RGB.B] * lightfinal));
+                        }
+
+                    }
+
+                }
+                finally
+                {
+                    curbitmap.UnlockBits(curimageData); //Unlock
+                }
+
+            }
+
+
+            string zzzzz = picdic + "\\aa.bmp";
+
+
+            curbitmap.Save(zzzzz, System.Drawing.Imaging.ImageFormat.Bmp);
+
+            curbitmap.Dispose();
+
+
+
+
+            int dfesf = 5;
         }
     }
 }

@@ -93,7 +93,7 @@
             // textBox5
             // 
             this.textBox5.AllowDrop = true;
-            this.textBox5.Location = new System.Drawing.Point(101, 232);
+            this.textBox5.Location = new System.Drawing.Point(102, 175);
             this.textBox5.Name = "textBox5";
             this.textBox5.Size = new System.Drawing.Size(452, 21);
             this.textBox5.TabIndex = 33;
@@ -103,7 +103,7 @@
             // textBox6
             // 
             this.textBox6.AllowDrop = true;
-            this.textBox6.Location = new System.Drawing.Point(101, 261);
+            this.textBox6.Location = new System.Drawing.Point(102, 204);
             this.textBox6.Name = "textBox6";
             this.textBox6.Size = new System.Drawing.Size(452, 21);
             this.textBox6.TabIndex = 34;
@@ -113,7 +113,7 @@
             // label5
             // 
             this.label5.AutoSize = true;
-            this.label5.Location = new System.Drawing.Point(24, 235);
+            this.label5.Location = new System.Drawing.Point(25, 178);
             this.label5.Name = "label5";
             this.label5.Size = new System.Drawing.Size(53, 12);
             this.label5.TabIndex = 35;
@@ -122,7 +122,7 @@
             // label6
             // 
             this.label6.AutoSize = true;
-            this.label6.Location = new System.Drawing.Point(24, 264);
+            this.label6.Location = new System.Drawing.Point(25, 207);
             this.label6.Name = "label6";
             this.label6.Size = new System.Drawing.Size(53, 12);
             this.label6.TabIndex = 36;
@@ -189,7 +189,7 @@
             this.AllowDrop = true;
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 12F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(596, 305);
+            this.ClientSize = new System.Drawing.Size(596, 252);
             this.Controls.Add(this.label1);
             this.Controls.Add(this.label2);
             this.Controls.Add(this.trackBar2);

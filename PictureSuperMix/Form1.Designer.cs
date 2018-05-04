@@ -537,11 +537,11 @@
             // 
             // button16
             // 
-            this.button16.Location = new System.Drawing.Point(645, 42);
+            this.button16.Location = new System.Drawing.Point(651, 60);
             this.button16.Name = "button16";
-            this.button16.Size = new System.Drawing.Size(62, 29);
+            this.button16.Size = new System.Drawing.Size(90, 29);
             this.button16.TabIndex = 45;
-            this.button16.Text = "button16";
+            this.button16.Text = "动态灯箱模拟";
             this.button16.UseVisualStyleBackColor = true;
             this.button16.Click += new System.EventHandler(this.button16_Click);
             // 

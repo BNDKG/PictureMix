@@ -11,6 +11,8 @@ using System.IO;
 using System.Threading;
 
 using System.Drawing.Imaging;
+using System.Management;
+using System.Diagnostics;
 
 using AForge;
 using AForge.Imaging.Filters;
@@ -187,21 +189,21 @@ namespace PictureSuperMix
         }
 
         private void aforgereadtest()
-        {            
+        {
+            try
+            {
+                //读取图片
+                Bitmap sourcepic = new Bitmap(Image.FromFile(textBox5.Text));
 
-            //读取图片
-            Bitmap sourcepic = new Bitmap(Image.FromFile(textBox5.Text));
+                // 生成视频生成读取器
+                VideoFileReader readerzzz = new VideoFileReader();
+                // 打开视频
+                readerzzz.Open(textBox6.Text);
 
-            // 生成视频生成读取器
-            VideoFileReader readerzzz = new VideoFileReader();
-            // 打开视频
-            readerzzz.Open(textBox6.Text);
-
-            // 生成视频写入器
-            VideoFileWriter writerzzz = new VideoFileWriter();
-            // 新建一个视频(帧必须是二的倍数)
-            writerzzz.Open("testoutput.avi", (sourcepic.Width/2)*2, (sourcepic.Height/2)*2, readerzzz.FrameRate, VideoCodec.MPEG4, 25000000);
-
+                // 生成视频写入器
+                VideoFileWriter writerzzz = new VideoFileWriter();
+                // 新建一个视频(帧必须是二的倍数)
+                writerzzz.Open("testoutput.avi", (sourcepic.Width / 2) * 2, (sourcepic.Height / 2) * 2, readerzzz.FrameRate, VideoCodec.MPEG4, 25000000);
 
 
             // 对视频的所有帧进行操作
@@ -299,7 +301,7 @@ namespace PictureSuperMix
                 curbitmap.Dispose();
                 curbitmapsource.Dispose();
                 Videochange.Dispose();
-
+                    
 
             }
             readerzzz.Close();
@@ -308,7 +310,22 @@ namespace PictureSuperMix
             //释放内存
             sourcepic.Dispose();
 
-            endflag = true;
+            }
+            catch (ArgumentException)
+            {
+                MessageBox.Show(" 请拖入视频文件和图片文件 ");
+                return;
+            }
+            catch (IOException)
+            {
+                MessageBox.Show(" 请拖入 正确 的视频文件和图片文件 ");
+                return;
+            }
+            finally
+            {
+                endflag = true;
+            }
+
 
         }
         public double[] Sub(double[]v1, double[]v2)
@@ -375,9 +392,8 @@ namespace PictureSuperMix
 
             if (endflag)
             {
-                this.progressBar1.Visible = false;
-                
                 timer1.Stop();
+                this.progressBar1.Visible = false;
                 button8.Text = "视频效果转换";
             }
 
@@ -532,14 +548,32 @@ namespace PictureSuperMix
             curbitmap.Dispose();
 
 
-
-
-            int dfesf = 5;
         }
 
         private void trackBar2_Scroll(object sender, EventArgs e)
         {
             label2.Text = "" + trackBar2.Value;
+        }
+
+        private void button1_Click(object sender, EventArgs e)
+        {
+            try
+            {
+                String file = @"testoutput.avi";
+                FileInfo info = new FileInfo(file);
+                Process p = new Process();
+                p.StartInfo.FileName = file;
+                p.StartInfo.WorkingDirectory = info.DirectoryName;
+                p.Start();
+
+            }
+            catch (Win32Exception)
+            {
+                MessageBox.Show(" 请先进行视频效果转换 ");
+            }
+            finally {
+
+            }
         }
     }
 }

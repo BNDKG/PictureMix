@@ -30,7 +30,6 @@
         {
             this.components = new System.ComponentModel.Container();
             this.button2 = new System.Windows.Forms.Button();
-            this.button15 = new System.Windows.Forms.Button();
             this.button8 = new System.Windows.Forms.Button();
             this.progressBar1 = new System.Windows.Forms.ProgressBar();
             this.timer1 = new System.Windows.Forms.Timer(this.components);
@@ -44,29 +43,20 @@
             this.label1 = new System.Windows.Forms.Label();
             this.label2 = new System.Windows.Forms.Label();
             this.trackBar2 = new System.Windows.Forms.TrackBar();
+            this.button1 = new System.Windows.Forms.Button();
             ((System.ComponentModel.ISupportInitialize)(this.trackBar1)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.trackBar2)).BeginInit();
             this.SuspendLayout();
             // 
             // button2
             // 
-            this.button2.Location = new System.Drawing.Point(12, 31);
+            this.button2.Location = new System.Drawing.Point(27, 31);
             this.button2.Name = "button2";
             this.button2.Size = new System.Drawing.Size(110, 41);
             this.button2.TabIndex = 2;
             this.button2.Text = "打开程序所在路径";
             this.button2.UseVisualStyleBackColor = true;
             this.button2.Click += new System.EventHandler(this.button2_Click);
-            // 
-            // button15
-            // 
-            this.button15.Location = new System.Drawing.Point(12, 81);
-            this.button15.Name = "button15";
-            this.button15.Size = new System.Drawing.Size(110, 53);
-            this.button15.TabIndex = 27;
-            this.button15.Text = "图片转视频";
-            this.button15.UseVisualStyleBackColor = true;
-            this.button15.Click += new System.EventHandler(this.button15_Click);
             // 
             // button8
             // 
@@ -184,12 +174,23 @@
             this.trackBar2.Value = 2;
             this.trackBar2.Scroll += new System.EventHandler(this.trackBar2_Scroll);
             // 
+            // button1
+            // 
+            this.button1.Location = new System.Drawing.Point(27, 83);
+            this.button1.Name = "button1";
+            this.button1.Size = new System.Drawing.Size(110, 49);
+            this.button1.TabIndex = 43;
+            this.button1.Text = "打开生成视频";
+            this.button1.UseVisualStyleBackColor = true;
+            this.button1.Click += new System.EventHandler(this.button1_Click);
+            // 
             // Form1
             // 
             this.AllowDrop = true;
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 12F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(596, 252);
+            this.Controls.Add(this.button1);
             this.Controls.Add(this.label1);
             this.Controls.Add(this.label2);
             this.Controls.Add(this.trackBar2);
@@ -202,7 +203,6 @@
             this.Controls.Add(this.textBox5);
             this.Controls.Add(this.progressBar1);
             this.Controls.Add(this.button8);
-            this.Controls.Add(this.button15);
             this.Controls.Add(this.button2);
             this.Name = "Form1";
             this.Text = "投影测试";
@@ -216,7 +216,6 @@
 
         #endregion
         private System.Windows.Forms.Button button2;
-        private System.Windows.Forms.Button button15;
         private System.Windows.Forms.Button button8;
         private System.Windows.Forms.ProgressBar progressBar1;
         private System.Windows.Forms.Timer timer1;
@@ -230,6 +229,7 @@
         private System.Windows.Forms.Label label1;
         private System.Windows.Forms.Label label2;
         private System.Windows.Forms.TrackBar trackBar2;
+        private System.Windows.Forms.Button button1;
     }
 }
 

@@ -11,6 +11,7 @@ using System.IO;
 using System.Threading;
 
 using System.Drawing.Imaging;
+using System.Diagnostics;
 
 using AForge;
 using AForge.Imaging.Filters;
@@ -1613,6 +1614,17 @@ namespace PictureSuperMix
                 );
 
         }
+        public double LightUpChange(double degree,double Wt,double W0)
+        {
+            double output = 0;
+
+            output = 1 / (1 + Math.Exp(-(Wt*degree + W0)));
+
+
+            return output;
+        }
+
+
         public double[] Normalize(double[] v)
         {
             double len = Math.Sqrt(v[0] * v[0] + v[1] * v[1] + v[2] * v[2]);
@@ -1736,7 +1748,7 @@ namespace PictureSuperMix
                     int pixelSize = (img.PixelFormat == PixelFormat.Format24bppRgb) ? 3 : 4;
                     byte* p = (byte*)img.ImageData.ToPointer();
 
-
+                    double Max = 0;
 
                     // for each line
                     for (int y = 0; y < height; y++)
@@ -1745,20 +1757,20 @@ namespace PictureSuperMix
                         // for each pixel
                         for (int x = 0; x < width; x++, p += pixelSize)
                         {
-                            double lightdegree = 13;
+                            double lightdegree = 25;
 
-                            double[] lamp1 = new[] { 668.0, 168, lightdegree };
-                            double[] lamp2 = new[] { 684.0, 168, lightdegree };
-                            double[] lamp3 = new[] { 700.0, 168, lightdegree };
-                            double[] lamp4 = new[] { 652.0, 168, lightdegree };
-                            double[] lamp5 = new[] { 636.0, 168, lightdegree };
+                            double[] lamp1 = new[] { 100.0, 100, lightdegree };
+                            double[] lamp2 = new[] { 84.0, 100, lightdegree };
+                            double[] lamp3 = new[] { 68.0, 100, lightdegree };
+                            double[] lamp4 = new[] { 52.0, 100, lightdegree };
+                            double[] lamp5 = new[] { 36.0, 100, lightdegree };
                             //double[] lamp6 = new[] { 668.0, 200, 25 };
                             //double[] lamp7 = new[] { 684.0, 168, 25 };
                             //double[] lamp8 = new[] { 668.0, 168, 25 };
                             //double[] lamp9 = new[] { 700.0, 168, 25 };
 
                             double[] curposition = new[] { x, y, 0.0 };
-                            double[] unit = new[] { 0.0, 0, 1.5 };
+                            double[] unit = new[] { 0.0, 0, 0.4 };
 
                             double[] lamp1vector = Normalize(Sub(lamp1, curposition));
                             double[] lamp2vector = Normalize(Sub(lamp2, curposition));
@@ -1779,15 +1791,21 @@ namespace PictureSuperMix
                             //double light7 = Dot(lamp7vector, unit);
                             //double light8 = Dot(lamp8vector, unit);
                             //double light9 = Dot(lamp9vector, unit);
-
+                            
                             double lightfinal = (light1 + light2 + light3 + light4 + light5) / 5;
-
+                            if (lightfinal>Max)
+                            {
+                                Max = lightfinal;
+                            }
                             //p[RGB.R] = (byte)Math.Min(255, (p[RGB.R] * (light1 + light2 + light3 + light4 + light5 + light6 + light7 + light8 + light9) / 9));
                             //p[RGB.G] = (byte)Math.Min(255, (p[RGB.G] * (light1 + light2 + light3 + light4 + light5 + light6 + light7 + light8 + light9) / 9));
                             //p[RGB.B] = (byte)Math.Min(255, (p[RGB.B] * (light1 + light2 + light3 + light4 + light5 + light6 + light7 + light8 + light9) / 9));
-                            p[RGB.R] = (byte)Math.Min(255, (p[RGB.R] * lightfinal));
-                            p[RGB.G] = (byte)Math.Min(255, (p[RGB.G] * lightfinal));
-                            p[RGB.B] = (byte)Math.Min(255, (p[RGB.B] * lightfinal));
+                            //p[RGB.R] = (byte)(p[RGB.R] * LightUpChange(lightfinal, 10, -5));
+                            //p[RGB.G] = (byte)(p[RGB.G] * LightUpChange(lightfinal, 10, -5));
+                            //p[RGB.B] = (byte)(p[RGB.B] * LightUpChange(lightfinal, 10, -5));
+                            p[RGB.R] = (byte)(p[RGB.R] * Math.Max(0, lightfinal ));
+                            p[RGB.G] = (byte)(p[RGB.G] * Math.Max(0, lightfinal ));
+                            p[RGB.B] = (byte)(p[RGB.B] * Math.Max(0, lightfinal ));
                         }
 
                     }
@@ -1801,7 +1819,7 @@ namespace PictureSuperMix
             }
 
 
-            string zzzzz = picdic + "\\aa.bmp";
+            string zzzzz = OriPath + "\\aa.bmp";
 
 
             curbitmap.Save(zzzzz, System.Drawing.Imaging.ImageFormat.Bmp);
@@ -1811,7 +1829,24 @@ namespace PictureSuperMix
 
 
 
-            int dfesf = 5;
+        }
+
+        private void button17_Click(object sender, EventArgs e)
+        {
+            String file = OriPath + "\\aa.bmp";
+            FileInfo info = new FileInfo(file);
+            Process p = new Process();
+            p.StartInfo.FileName = file;
+            p.StartInfo.WorkingDirectory = info.DirectoryName;
+            p.Start();
+        }
+
+        private void button18_Click(object sender, EventArgs e)
+        {
+            for(double i = 0; i < 100; i++)
+            {
+                double kk=LightUpChange(i/100 ,10 , -5);
+            }
         }
     }
 }

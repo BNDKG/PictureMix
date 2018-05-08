@@ -1623,7 +1623,28 @@ namespace PictureSuperMix
 
             return output;
         }
+        public double LightUpChange2(double degree)
+        {
+            double output = 0;
+            
+            if(0<=degree && 0.375 >= degree)
+            {
+                output=degree/3;
+            }
+            else if(0.375<degree && degree <= 0.625)
+            {
+                output = degree * 3 -1;
+            }
+            else if (0.625 < degree && degree <= 1)
+            {
+                output = (degree - 0.25) / 3 + 0.75;
+            }
 
+
+            output =Math.Min(1, output);
+
+            return degree;
+        }
 
         public double[] Normalize(double[] v)
         {
@@ -1725,6 +1746,13 @@ namespace PictureSuperMix
         {
 
         }
+        public struct PointSource
+        {
+            public double X;
+            public double Y;
+            public double LightDistance;
+            public double LightDegree;
+        }
 
         private void button16_Click(object sender, EventArgs e)
         {
@@ -1757,7 +1785,51 @@ namespace PictureSuperMix
                         // for each pixel
                         for (int x = 0; x < width; x++, p += pixelSize)
                         {
-                            double lightdegree = 25;
+                            int Lampwidth = Convert.ToInt32(textBox7.Text);
+                            int Lampheight = Convert.ToInt32(textBox8.Text);
+
+                            PointSource[] Lamps = new PointSource[Lampwidth * Lampheight];
+
+                            //循环找到亮灯的程度
+
+                            for(int xx = 0; xx < Lampheight; xx++)
+                            {
+                                for(int yy = 0; yy < Lampwidth; yy++)
+                                {
+                                    Lamps[xx * Lampwidth + yy].X = xx * 16+1;
+                                    Lamps[xx * Lampwidth + yy].Y = yy * 16+1;
+                                    Lamps[xx * Lampwidth + yy].LightDegree =1;
+                                    Lamps[xx * Lampwidth + yy].LightDistance = 14;
+
+                                }
+                            }
+
+                            double finaldegreereverse = 0;
+                            for(int xx = 0; xx < (Lampheight * Lampwidth); xx++)
+                            {
+                                double buff1 = (Lamps[xx].X - x);
+                                double buff2 = (Lamps[xx].Y - y);
+                                double buff3 = Lamps[xx].LightDistance;
+
+                                double buff4 = Math.Sqrt(buff1 * buff1 + buff2 * buff2 + buff3 * buff3);
+                                double buff5 = buff3 / buff4;
+
+                                double buff6 = buff5 * Lamps[xx].LightDegree;
+
+                                finaldegreereverse +=buff6;
+                            }
+                            if (finaldegreereverse > Max)
+                            {
+                                Max = finaldegreereverse;
+                            }
+
+
+                            double finaldegree = finaldegreereverse/ ((Lampheight * Lampwidth));
+
+
+
+                            double lightdegree = 14;
+
 
                             double[] lamp1 = new[] { 100.0, 100, lightdegree };
                             double[] lamp2 = new[] { 84.0, 100, lightdegree };
@@ -1770,17 +1842,14 @@ namespace PictureSuperMix
                             //double[] lamp9 = new[] { 700.0, 168, 25 };
 
                             double[] curposition = new[] { x, y, 0.0 };
-                            double[] unit = new[] { 0.0, 0, 0.4 };
+                            double[] unit = new[] { 0.0, 0, 1.6 };
 
                             double[] lamp1vector = Normalize(Sub(lamp1, curposition));
                             double[] lamp2vector = Normalize(Sub(lamp2, curposition));
                             double[] lamp3vector = Normalize(Sub(lamp3, curposition));
                             double[] lamp4vector = Normalize(Sub(lamp4, curposition));
                             double[] lamp5vector = Normalize(Sub(lamp5, curposition));
-                            //double[] lamp6vector = Normalize(Sub(lamp6, curposition));
-                            //double[] lamp7vector = Normalize(Sub(lamp7, curposition));
-                            //double[] lamp8vector = Normalize(Sub(lamp8, curposition));
-                            //double[] lamp9vector = Normalize(Sub(lamp9, curposition));
+
 
                             double light1 = Dot(lamp1vector, unit);
                             double light2 = Dot(lamp2vector, unit);
@@ -1792,20 +1861,22 @@ namespace PictureSuperMix
                             //double light8 = Dot(lamp8vector, unit);
                             //double light9 = Dot(lamp9vector, unit);
                             
-                            double lightfinal = (light1 + light2 + light3 + light4 + light5) / 5;
-                            if (lightfinal>Max)
-                            {
-                                Max = lightfinal;
-                            }
+                            double lightfinal = (LightUpChange2(light1) + LightUpChange2(light2) + LightUpChange2(light3) + LightUpChange2(light4) + LightUpChange2(light5)) / 5;
+
                             //p[RGB.R] = (byte)Math.Min(255, (p[RGB.R] * (light1 + light2 + light3 + light4 + light5 + light6 + light7 + light8 + light9) / 9));
                             //p[RGB.G] = (byte)Math.Min(255, (p[RGB.G] * (light1 + light2 + light3 + light4 + light5 + light6 + light7 + light8 + light9) / 9));
                             //p[RGB.B] = (byte)Math.Min(255, (p[RGB.B] * (light1 + light2 + light3 + light4 + light5 + light6 + light7 + light8 + light9) / 9));
                             //p[RGB.R] = (byte)(p[RGB.R] * LightUpChange(lightfinal, 10, -5));
                             //p[RGB.G] = (byte)(p[RGB.G] * LightUpChange(lightfinal, 10, -5));
                             //p[RGB.B] = (byte)(p[RGB.B] * LightUpChange(lightfinal, 10, -5));
-                            p[RGB.R] = (byte)(p[RGB.R] * Math.Max(0, lightfinal ));
-                            p[RGB.G] = (byte)(p[RGB.G] * Math.Max(0, lightfinal ));
-                            p[RGB.B] = (byte)(p[RGB.B] * Math.Max(0, lightfinal ));
+                            //p[RGB.R] = (byte)(p[RGB.R] * Math.Min(1, (lightfinal)));
+                            //p[RGB.G] = (byte)(p[RGB.G] * Math.Min(1, (lightfinal )));
+                            //p[RGB.B] = (byte)(p[RGB.B] * Math.Min(1, (lightfinal )));
+                            
+                            p[RGB.R] = (byte)(p[RGB.R] * Math.Min(1, (finaldegree)));
+                            p[RGB.G] = (byte)(p[RGB.G] * Math.Min(1, (finaldegree)));
+                            p[RGB.B] = (byte)(p[RGB.B] * Math.Min(1, (finaldegree)));
+                            label12.Text = Convert.ToString(Max);
                         }
 
                     }

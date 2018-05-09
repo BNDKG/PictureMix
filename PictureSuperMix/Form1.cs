@@ -1194,26 +1194,18 @@ namespace PictureSuperMix
                             // for each pixel
                             for (int x = 0; x < width; x++, p += pixelSize)
                             {
-
-
-
-                                if (x>480 && x<544)
+                                if (x > 20 && y > 20 && x<212 &&y<100)
                                 {
-                                    p[RGB.R] = (byte)70;
-                                    p[RGB.G] = (byte)70;
-                                    p[RGB.B] = (byte)70;
+                                    p[RGB.R] = (byte)(255 / 10 * ((y - 20) / 8+1));
+                                    p[RGB.G] = (byte)(255 / 10 * ((y - 20) / 8+1));
+                                    p[RGB.B] = (byte)(255 / 10 * ((y - 20) / 8+1));
+
                                 }
-                                else if (x >= 544 && x < 608)
+                                else
                                 {
-                                    p[RGB.R] = (byte)71;
-                                    p[RGB.G] = (byte)71;
-                                    p[RGB.B] = (byte)71;
-                                }
-                                else if (x >= 608)
-                                {
-                                    p[RGB.R] = (byte)72;
-                                    p[RGB.G] = (byte)72;
-                                    p[RGB.B] = (byte)72;
+                                    p[RGB.R] = (byte)0;
+                                    p[RGB.G] = (byte)0;
+                                    p[RGB.B] = (byte)0;
                                 }
 
 
@@ -1623,6 +1615,15 @@ namespace PictureSuperMix
 
             return output;
         }
+        public double LightUpChange3(double degree)
+        {
+            double output = 0;
+
+            output =(1 - Math.Exp(-( degree )));
+
+
+            return output;
+        }
         public double LightUpChange2(double degree)
         {
             double output = 0;
@@ -1759,9 +1760,15 @@ namespace PictureSuperMix
 
             //读取图片
             Bitmap curbitmap = new Bitmap(Image.FromFile(textBox5.Text));
-
+            //锁定图片
             BitmapData curimageData = curbitmap.LockBits(new Rectangle(0, 0, curbitmap.Width, curbitmap.Height),
             ImageLockMode.ReadOnly, curbitmap.PixelFormat);
+
+            //读取效果图片
+            Bitmap effbitmap= new Bitmap(Image.FromFile(textBox6.Text));
+
+            BitmapData curimageData2 = effbitmap.LockBits(new Rectangle(0, 0, effbitmap.Width, effbitmap.Height),
+            ImageLockMode.ReadOnly, effbitmap.PixelFormat);
 
             //###########################left###########################//
             unsafe
@@ -1769,6 +1776,7 @@ namespace PictureSuperMix
                 //Count red and black pixels
                 try
                 {
+                    //背景图片
                     UnmanagedImage img = new UnmanagedImage(curimageData);
 
                     int height = img.Height;
@@ -1776,7 +1784,36 @@ namespace PictureSuperMix
                     int pixelSize = (img.PixelFormat == PixelFormat.Format24bppRgb) ? 3 : 4;
                     byte* p = (byte*)img.ImageData.ToPointer();
 
+                    //效果图片
+
+                    UnmanagedImage img2 = new UnmanagedImage(curimageData2);
+
+                    int height2 = img2.Height;
+                    int width2 = img2.Width;
+                    int pixelSize2 = (img2.PixelFormat == PixelFormat.Format24bppRgb) ? 3 : 4;
+                    byte* p2 = (byte*)img2.ImageData.ToPointer();
+
+
                     double Max = 0;
+
+                    int Lampwidth = width2;
+                    int Lampheight = height2;
+
+                    PointSource[] Lamps = new PointSource[Lampwidth * Lampheight];
+
+
+                    for (int yy = 0; yy < Lampheight; yy++)
+                    {
+                        for (int xx = 0; xx < Lampwidth; xx++, p2 += pixelSize2)
+                        {
+                            Lamps[yy * Lampwidth + xx].X = xx * 16 + 1;
+                            Lamps[yy * Lampwidth + xx].Y = yy * 16 + 1;
+                            Lamps[yy * Lampwidth + xx].LightDegree = ((double)1 /(double)255)* (double)p2[RGB.R];
+                            Lamps[yy * Lampwidth + xx].LightDistance = 3;
+
+                        }
+                    }
+
 
                     // for each line
                     for (int y = 0; y < height; y++)
@@ -1785,48 +1822,33 @@ namespace PictureSuperMix
                         // for each pixel
                         for (int x = 0; x < width; x++, p += pixelSize)
                         {
-                            int Lampwidth = Convert.ToInt32(textBox7.Text);
-                            int Lampheight = Convert.ToInt32(textBox8.Text);
-
-                            PointSource[] Lamps = new PointSource[Lampwidth * Lampheight];
-
-                            //循环找到亮灯的程度
-
-                            for(int xx = 0; xx < Lampheight; xx++)
-                            {
-                                for(int yy = 0; yy < Lampwidth; yy++)
-                                {
-                                    Lamps[xx * Lampwidth + yy].X = xx * 16+1;
-                                    Lamps[xx * Lampwidth + yy].Y = yy * 16+1;
-                                    Lamps[xx * Lampwidth + yy].LightDegree =1;
-                                    Lamps[xx * Lampwidth + yy].LightDistance = 14;
-
-                                }
-                            }
 
                             double finaldegreereverse = 0;
                             for(int xx = 0; xx < (Lampheight * Lampwidth); xx++)
                             {
+
                                 double buff1 = (Lamps[xx].X - x);
                                 double buff2 = (Lamps[xx].Y - y);
                                 double buff3 = Lamps[xx].LightDistance;
 
                                 double buff4 = Math.Sqrt(buff1 * buff1 + buff2 * buff2 + buff3 * buff3);
                                 double buff5 = buff3 / buff4;
+                                //Lamps[xx].LightDegree
+                                double buff6 = buff5 * 1;
 
-                                double buff6 = buff5 * Lamps[xx].LightDegree;
 
-                                finaldegreereverse +=buff6;
+
+                                if (Math.Sqrt(buff1 * buff1 + buff2 * buff2) < 10)
+                                {
+                                    finaldegreereverse += buff6;
+                                }
+
+
                             }
-                            if (finaldegreereverse > Max)
-                            {
-                                Max = finaldegreereverse;
-                            }
 
 
-                            double finaldegree = finaldegreereverse/ ((Lampheight * Lampwidth));
-
-
+                            double finaldegree = LightUpChange3(finaldegreereverse);
+                            //double finaldegree = finaldegreereverse;
 
                             double lightdegree = 14;
 
@@ -1885,6 +1907,7 @@ namespace PictureSuperMix
                 finally
                 {
                     curbitmap.UnlockBits(curimageData); //Unlock
+                    effbitmap.UnlockBits(curimageData2);
                 }
 
             }

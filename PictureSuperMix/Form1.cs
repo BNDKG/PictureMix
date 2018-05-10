@@ -1960,10 +1960,10 @@ namespace PictureSuperMix
                     {
                         for (int xx = 0; xx < Lampwidth; xx++, p2 += pixelSize2)
                         {
-                            Lamps[yy * Lampwidth + xx].X = xx * 16 + 1;
-                            Lamps[yy * Lampwidth + xx].Y = yy * 16 + 1;
+                            Lamps[yy * Lampwidth + xx].X = xx * 4 + 2;
+                            Lamps[yy * Lampwidth + xx].Y = yy * 4 + 2;
                             Lamps[yy * Lampwidth + xx].LightDegree = (((double)15 * (double)p2[RGB.R]) / (double)255);
-                            Lamps[yy * Lampwidth + xx].LightDistance = 25;
+                            Lamps[yy * Lampwidth + xx].LightDistance = 6.25;
 
                         }
                     }
@@ -1983,19 +1983,23 @@ namespace PictureSuperMix
 
                                 double buff1 = (Lamps[xx].X - x);
                                 double buff2 = (Lamps[xx].Y - y);
+
+
+                                if ((buff1 * buff1 + buff2 * buff2) > 1000)
+                                {
+                                    continue;
+                                }
+
+
                                 double buff3 = Lamps[xx].LightDistance;
 
                                 double buff4 = Math.Sqrt(buff1 * buff1 + buff2 * buff2 + buff3 * buff3);
                                 double buff5 = buff3 / buff4;
                                 //Lamps[xx].LightDegree
-                                double buff6 = buff5 * Math.Exp(-buff4/6);
+                                double buff6 = buff5 * Math.Exp(-buff4/1.5);
 
+                                finaldegreereverse += buff6* Lamps[xx].LightDegree;
 
-
-                                if (Math.Sqrt(buff1 * buff1 + buff2 * buff2) < 100)
-                                {
-                                    finaldegreereverse += buff6* Lamps[xx].LightDegree;
-                                }
 
 
                             }

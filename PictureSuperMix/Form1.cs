@@ -1463,7 +1463,7 @@ namespace PictureSuperMix
             shadowpercent = (float)trackBar1.Value / 10;
 
 
-            Thread oGetArgThread = new Thread(new ThreadStart(aforgereadtest));
+            Thread oGetArgThread = new Thread(new ThreadStart(aforgechange));
             oGetArgThread.IsBackground = true;
             oGetArgThread.Start();
 
@@ -1553,6 +1553,160 @@ namespace PictureSuperMix
                             }
 
                         }
+
+                    }
+                    finally
+                    {
+                        curbitmap.UnlockBits(curimageData); //Unlock
+                    }
+
+                }
+
+                //写入当前帧
+                writerzzz.WriteVideoFrame(curbitmap);
+
+                // 释放当前操作内存
+                curbitmap.Dispose();
+                curbitmapsource.Dispose();
+                Videochange.Dispose();
+
+
+            }
+            readerzzz.Close();
+
+            writerzzz.Close();
+            //释放内存
+            sourcepic.Dispose();
+
+            endflag = true;
+
+        }
+        private void aforgechange()
+        {
+
+            //读取图片
+            Bitmap sourcepic = new Bitmap(Image.FromFile(textBox5.Text));
+
+            // 生成视频生成读取器
+            VideoFileReader readerzzz = new VideoFileReader();
+            // 打开视频
+            readerzzz.Open(textBox6.Text);
+
+            // 生成视频写入器
+            VideoFileWriter writerzzz = new VideoFileWriter();
+            // 新建一个视频(帧必须是二的倍数)
+            writerzzz.Open("testoutput.avi", (sourcepic.Width / 2) * 2, (sourcepic.Height / 2) * 2, readerzzz.FrameRate, VideoCodec.MPEG4, 25000000);
+
+
+
+            // 对视频的所有帧进行操作
+            for (int i = 0; i < (readerzzz.FrameCount - 1) && endflag == false; i++)
+            {
+                backcounter = (((float)i) / (readerzzz.FrameCount - 1)) * 100;
+
+                //载入当前帧动画
+                Bitmap curbitmapsource = readerzzz.ReadVideoFrame();
+
+
+                //载入背景
+                Bitmap curbitmap = sourcepic.Clone(new Rectangle(0, 0, (sourcepic.Width / 2) * 2, (sourcepic.Height / 2) * 2), sourcepic.PixelFormat);
+
+                //模糊化
+                Bitmap Videochangebuf = new Bitmap(curbitmapsource, 192, 80);
+
+                //投影变化
+                Bitmap Videochange = new Bitmap(Videochangebuf, curbitmap.Width, curbitmap.Height);
+
+                //背景图片
+                BitmapData curimageData = curbitmap.LockBits(new Rectangle(0, 0, curbitmap.Width, curbitmap.Height),
+                ImageLockMode.ReadOnly, curbitmap.PixelFormat);
+
+                //灯光图片
+                BitmapData curimageData2 = Videochange.LockBits(new Rectangle(0, 0, Videochange.Width, Videochange.Height),
+                ImageLockMode.ReadOnly, Videochange.PixelFormat);
+
+
+                unsafe
+                {
+                    try
+                    {
+                        //背景图片
+                        UnmanagedImage img = new UnmanagedImage(curimageData);
+
+                        int height = img.Height;
+                        int width = img.Width;
+                        int pixelSize = (img.PixelFormat == PixelFormat.Format24bppRgb) ? 3 : 4;
+                        byte* p = (byte*)img.ImageData.ToPointer();
+
+                        //灯光图片
+                        UnmanagedImage img2 = new UnmanagedImage(curimageData2);
+
+                        int height2 = img2.Height;
+                        int width2 = img2.Width;
+                        int pixelSize2 = (img2.PixelFormat == PixelFormat.Format24bppRgb) ? 3 : 4;
+                        byte* p2 = (byte*)img2.ImageData.ToPointer();
+
+                        int Lampwidth = width2;
+                        int Lampheight = height2;
+
+                        PointSource[] Lamps = new PointSource[Lampwidth * Lampheight];
+
+
+                        for (int yy = 0; yy < Lampheight; yy++)
+                        {
+                            for (int xx = 0; xx < Lampwidth; xx++, p2 += pixelSize2)
+                            {
+                                Lamps[yy * Lampwidth + xx].X = xx * 16 + 1;
+                                Lamps[yy * Lampwidth + xx].Y = yy * 16 + 1;
+                                Lamps[yy * Lampwidth + xx].LightDegree = (((double)15 * (double)p2[RGB.R]) / (double)255);
+                                Lamps[yy * Lampwidth + xx].LightDistance = 25;
+
+                            }
+                        }
+                        // for each line
+                        for (int y = 0; y < height; y++)
+                        {
+
+                            // for each pixel
+                            for (int x = 0; x < width; x++, p += pixelSize)
+                            {
+
+                                double finaldegreereverse = 0;
+                                for (int xx = 0; xx < (Lampheight * Lampwidth); xx++)
+                                {
+
+                                    double buff1 = (Lamps[xx].X - x);
+                                    double buff2 = (Lamps[xx].Y - y);
+                                    double buff3 = Lamps[xx].LightDistance;
+
+                                    double buff4 = Math.Sqrt(buff1 * buff1 + buff2 * buff2 + buff3 * buff3);
+                                    double buff5 = buff3 / buff4;
+                                    //Lamps[xx].LightDegree
+                                    double buff6 = buff5 * Math.Exp(-buff4 / 6);
+
+
+
+                                    if (Math.Sqrt(buff1 * buff1 + buff2 * buff2) < 100)
+                                    {
+                                        finaldegreereverse += buff6 * Lamps[xx].LightDegree;
+                                    }
+
+
+                                }
+
+
+                                //double finaldegree = LightUpChange3(finaldegreereverse);
+                                double finaldegree = finaldegreereverse;
+
+                                p[RGB.R] = (byte)(p[RGB.R] * Math.Min(1, (finaldegree)));
+                                p[RGB.G] = (byte)(p[RGB.G] * Math.Min(1, (finaldegree)));
+                                p[RGB.B] = (byte)(p[RGB.B] * Math.Min(1, (finaldegree)));
+
+                            }
+
+                        }
+
+
 
                     }
                     finally
@@ -1808,8 +1962,8 @@ namespace PictureSuperMix
                         {
                             Lamps[yy * Lampwidth + xx].X = xx * 16 + 1;
                             Lamps[yy * Lampwidth + xx].Y = yy * 16 + 1;
-                            Lamps[yy * Lampwidth + xx].LightDegree = ((double)1 /(double)255)* (double)p2[RGB.R];
-                            Lamps[yy * Lampwidth + xx].LightDistance = 3;
+                            Lamps[yy * Lampwidth + xx].LightDegree = (((double)15 * (double)p2[RGB.R]) / (double)255);
+                            Lamps[yy * Lampwidth + xx].LightDistance = 25;
 
                         }
                     }
@@ -1834,66 +1988,21 @@ namespace PictureSuperMix
                                 double buff4 = Math.Sqrt(buff1 * buff1 + buff2 * buff2 + buff3 * buff3);
                                 double buff5 = buff3 / buff4;
                                 //Lamps[xx].LightDegree
-                                double buff6 = buff5 * 1;
+                                double buff6 = buff5 * Math.Exp(-buff4/6);
 
 
 
-                                if (Math.Sqrt(buff1 * buff1 + buff2 * buff2) < 10)
+                                if (Math.Sqrt(buff1 * buff1 + buff2 * buff2) < 100)
                                 {
-                                    finaldegreereverse += buff6;
+                                    finaldegreereverse += buff6* Lamps[xx].LightDegree;
                                 }
 
 
                             }
 
 
-                            double finaldegree = LightUpChange3(finaldegreereverse);
-                            //double finaldegree = finaldegreereverse;
-
-                            double lightdegree = 14;
-
-
-                            double[] lamp1 = new[] { 100.0, 100, lightdegree };
-                            double[] lamp2 = new[] { 84.0, 100, lightdegree };
-                            double[] lamp3 = new[] { 68.0, 100, lightdegree };
-                            double[] lamp4 = new[] { 52.0, 100, lightdegree };
-                            double[] lamp5 = new[] { 36.0, 100, lightdegree };
-                            //double[] lamp6 = new[] { 668.0, 200, 25 };
-                            //double[] lamp7 = new[] { 684.0, 168, 25 };
-                            //double[] lamp8 = new[] { 668.0, 168, 25 };
-                            //double[] lamp9 = new[] { 700.0, 168, 25 };
-
-                            double[] curposition = new[] { x, y, 0.0 };
-                            double[] unit = new[] { 0.0, 0, 1.6 };
-
-                            double[] lamp1vector = Normalize(Sub(lamp1, curposition));
-                            double[] lamp2vector = Normalize(Sub(lamp2, curposition));
-                            double[] lamp3vector = Normalize(Sub(lamp3, curposition));
-                            double[] lamp4vector = Normalize(Sub(lamp4, curposition));
-                            double[] lamp5vector = Normalize(Sub(lamp5, curposition));
-
-
-                            double light1 = Dot(lamp1vector, unit);
-                            double light2 = Dot(lamp2vector, unit);
-                            double light3 = Dot(lamp3vector, unit);
-                            double light4 = Dot(lamp4vector, unit);
-                            double light5 = Dot(lamp5vector, unit);
-                            //double light6 = Dot(lamp6vector, unit);
-                            //double light7 = Dot(lamp7vector, unit);
-                            //double light8 = Dot(lamp8vector, unit);
-                            //double light9 = Dot(lamp9vector, unit);
-                            
-                            double lightfinal = (LightUpChange2(light1) + LightUpChange2(light2) + LightUpChange2(light3) + LightUpChange2(light4) + LightUpChange2(light5)) / 5;
-
-                            //p[RGB.R] = (byte)Math.Min(255, (p[RGB.R] * (light1 + light2 + light3 + light4 + light5 + light6 + light7 + light8 + light9) / 9));
-                            //p[RGB.G] = (byte)Math.Min(255, (p[RGB.G] * (light1 + light2 + light3 + light4 + light5 + light6 + light7 + light8 + light9) / 9));
-                            //p[RGB.B] = (byte)Math.Min(255, (p[RGB.B] * (light1 + light2 + light3 + light4 + light5 + light6 + light7 + light8 + light9) / 9));
-                            //p[RGB.R] = (byte)(p[RGB.R] * LightUpChange(lightfinal, 10, -5));
-                            //p[RGB.G] = (byte)(p[RGB.G] * LightUpChange(lightfinal, 10, -5));
-                            //p[RGB.B] = (byte)(p[RGB.B] * LightUpChange(lightfinal, 10, -5));
-                            //p[RGB.R] = (byte)(p[RGB.R] * Math.Min(1, (lightfinal)));
-                            //p[RGB.G] = (byte)(p[RGB.G] * Math.Min(1, (lightfinal )));
-                            //p[RGB.B] = (byte)(p[RGB.B] * Math.Min(1, (lightfinal )));
+                            //double finaldegree = LightUpChange3(finaldegreereverse);
+                            double finaldegree = finaldegreereverse;
                             
                             p[RGB.R] = (byte)(p[RGB.R] * Math.Min(1, (finaldegree)));
                             p[RGB.G] = (byte)(p[RGB.G] * Math.Min(1, (finaldegree)));

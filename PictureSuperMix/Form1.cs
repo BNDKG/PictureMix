@@ -336,7 +336,8 @@ namespace PictureSuperMix
 
 
         }
-        private void aforgereadtest2()
+
+        private void aforgereadtest3()
         {
             try
             {
@@ -351,7 +352,7 @@ namespace PictureSuperMix
                 // 生成视频写入器
                 VideoFileWriter writerzzz = new VideoFileWriter();
                 // 新建一个视频(帧必须是二的倍数)
-                writerzzz.Open("testoutput.avi", (sourcepic.Width / 2) * 2, (sourcepic.Height / 2) * 2, readerzzz.FrameRate, VideoCodec.MPEG4, 25000000);
+                writerzzz.Open("testoutput.avi", 768, 328, readerzzz.FrameRate, VideoCodec.MPEG4, 25000000);
 
 
                 // 对视频的所有帧进行操作
@@ -364,7 +365,154 @@ namespace PictureSuperMix
 
 
                     //载入背景
-                    Bitmap curbitmap = sourcepic.Clone(new Rectangle(0, 0, (sourcepic.Width / 2) * 2, (sourcepic.Height / 2) * 2), sourcepic.PixelFormat);
+                    Bitmap bitmapchange = sourcepic.Clone(new Rectangle(0, 0, (sourcepic.Width / 2) * 2, (sourcepic.Height / 2) * 2), sourcepic.PixelFormat);
+
+                    Bitmap curbitmap = new Bitmap(bitmapchange, 768, 328);
+
+                    //模糊化
+                    Bitmap Videochangebuf = new Bitmap(curbitmapsource, 192, 80);
+
+                    //投影变化
+                    Bitmap Videochange = new Bitmap(Videochangebuf, curbitmap.Width, curbitmap.Height);
+
+                    Videochangebuf.Dispose();
+
+
+                    //背景图片
+                    BitmapData curimageData = curbitmap.LockBits(new Rectangle(0, 0, curbitmap.Width, curbitmap.Height),
+                    ImageLockMode.ReadOnly, curbitmap.PixelFormat);
+
+                    //灯光图片
+                    BitmapData curimageData2 = Videochange.LockBits(new Rectangle(0, 0, Videochange.Width, Videochange.Height),
+                    ImageLockMode.ReadOnly, Videochange.PixelFormat);
+
+
+                    unsafe
+                    {
+                        try
+                        {
+                            UnmanagedImage img = new UnmanagedImage(curimageData);
+
+                            int height = img.Height;
+                            int width = img.Width;
+                            int pixelSize = (img.PixelFormat == PixelFormat.Format24bppRgb) ? 3 : 4;
+                            byte* p = (byte*)img.ImageData.ToPointer();
+
+                            UnmanagedImage img2 = new UnmanagedImage(curimageData2);
+
+                            int height2 = img2.Height;
+                            int width2 = img2.Width;
+                            int pixelSize2 = (img2.PixelFormat == PixelFormat.Format24bppRgb) ? 3 : 4;
+                            byte* p2 = (byte*)img2.ImageData.ToPointer();
+
+
+
+
+                            // for each line
+                            for (int y = 0; y < height; y++)
+                            {
+
+                                // for each pixel
+                                for (int x = 0; x < width; x++, p += pixelSize, p2 += pixelSize2)
+                                {
+
+                                    float rr = ((float)p2[RGB.R]) / 255;
+                                    float gg = ((float)p2[RGB.G]) / 255;
+                                    float bb = ((float)p2[RGB.B]) / 255;
+
+                                    //float mulr = (shadowpercent + rr) / (1 + shadowpercent);
+                                    //float mulg = (shadowpercent + gg) / (1 + shadowpercent);
+                                    //float mulb = (shadowpercent + bb) / (1 + shadowpercent);
+
+                                    float mulr = (shadowpercent * rr);
+                                    float mulg = (shadowpercent * gg);
+                                    float mulb = (shadowpercent * bb);
+
+                                    p[RGB.R] = (byte)(p[RGB.R] * (mulr * Envpercent + 1 - Envpercent));
+                                    p[RGB.G] = (byte)(p[RGB.G] * (mulg * Envpercent + 1 - Envpercent));
+                                    p[RGB.B] = (byte)(p[RGB.B] * (mulb * Envpercent + 1 - Envpercent));
+
+                                }
+
+                            }
+
+                        }
+                        finally
+                        {
+                            curbitmap.UnlockBits(curimageData); //Unlock
+                            Videochange.UnlockBits(curimageData2);
+                        }
+
+                    }
+
+                    //写入当前帧
+                    writerzzz.WriteVideoFrame(curbitmap);
+
+                    // 释放当前操作内存
+                    curbitmap.Dispose();
+                    curbitmapsource.Dispose();
+                    Videochange.Dispose();
+                    bitmapchange.Dispose();
+
+                }
+                readerzzz.Close();
+
+                writerzzz.Close();
+                //释放内存
+                sourcepic.Dispose();
+
+            }
+            catch (ArgumentException)
+            {
+                MessageBox.Show(" 请拖入视频文件和图片文件 ");
+                return;
+            }
+            catch (IOException)
+            {
+                MessageBox.Show(" 请拖入 正确 的视频文件和图片文件 ");
+                return;
+            }
+            finally
+            {
+                endflag = true;
+            }
+
+
+        }
+        private void aforgereadtest2()
+        {
+            int Definition = 1;
+
+
+            try
+            {
+                //读取图片
+                Bitmap sourcepic = new Bitmap(Image.FromFile(textBox5.Text));
+
+                // 生成视频生成读取器
+                VideoFileReader readerzzz = new VideoFileReader();
+                // 打开视频
+                readerzzz.Open(textBox6.Text);
+
+                // 生成视频写入器
+                VideoFileWriter writerzzz = new VideoFileWriter();
+                // 新建一个视频(帧必须是二的倍数)
+                writerzzz.Open("testoutput.avi", 768, 328, readerzzz.FrameRate, VideoCodec.MPEG4, 25000000);
+
+
+                // 对视频的所有帧进行操作
+                for (int i = 0; i < (readerzzz.FrameCount - 1) && endflag == false; i++)
+                {
+                    backcounter = (((float)i) / (readerzzz.FrameCount - 1)) * 100;
+
+                    //载入当前帧动画
+                    Bitmap curbitmapsource = readerzzz.ReadVideoFrame();
+
+
+                    //载入背景
+                    Bitmap bitmapchange = sourcepic.Clone(new Rectangle(0, 0, (sourcepic.Width / 2) * 2, (sourcepic.Height / 2) * 2), sourcepic.PixelFormat);
+
+                    Bitmap  curbitmap = new Bitmap(bitmapchange, 768, 328);
 
                     //模糊化
                     Bitmap Videochangebuf = new Bitmap(curbitmapsource, 192, 80);
@@ -406,18 +554,20 @@ namespace PictureSuperMix
                             int Lampwidth = width2;
                             int Lampheight = height2;
 
-                            PointSource[] Lamps = new PointSource[Lampwidth * Lampheight];
+                            PointSource[,] Lamps = new PointSource[Lampwidth, Lampheight];
 
+                            double lightlevel = 0;
 
                             for (int yy = 0; yy < Lampheight; yy++)
                             {
                                 for (int xx = 0; xx < Lampwidth; xx++, p2 += pixelSize2)
                                 {
-                                    Lamps[yy * Lampwidth + xx].X = xx * 16 + 1;
-                                    Lamps[yy * Lampwidth + xx].Y = yy * 16 + 1;
-                                    Lamps[yy * Lampwidth + xx].LightDegree = (((double)15 * (double)p2[RGB.R]) / (double)255);
-                                    Lamps[yy * Lampwidth + xx].LightDistance = 25;
+                                    Lamps[xx, yy].X = xx * 4 * Definition + 2;
+                                    Lamps[xx, yy].Y = yy * 4 * Definition + 2;
+                                    Lamps[xx, yy].LightDegree = (((double)1 * (double)p2[RGB.R]) / (double)255);
+                                    Lamps[xx, yy].LightDistance = 6.25 * Definition;
 
+                                    lightlevel += Lamps[xx, yy].LightDegree;
                                 }
                             }
 
@@ -431,34 +581,69 @@ namespace PictureSuperMix
                                 {
 
                                     double finaldegreereverse = 0;
-                                    for (int xx = 0; xx < (Lampheight * Lampwidth); xx++)
+                                    bool endflag = false;
+
+                                    int yystart = Math.Max(0, y / 4 - 8);
+
+                                    for (int yy = yystart; yy < Lampheight; yy++)
                                     {
+                                        int xxstart = Math.Max(0, x / 4 - 8);
 
-                                        double buff1 = (Lamps[xx].X - x);
-                                        double buff2 = (Lamps[xx].Y - y);
-                                        double buff3 = Lamps[xx].LightDistance;
-
-                                        double buff4 = Math.Sqrt(buff1 * buff1 + buff2 * buff2 + buff3 * buff3);
-                                        double buff5 = buff3 / buff4;
-                                        //Lamps[xx].LightDegree
-                                        double buff6 = buff5 * Math.Exp(-buff4 / 6);
-
-
-
-                                        if (Math.Sqrt(buff1 * buff1 + buff2 * buff2) < 100)
+                                        for (int xx = xxstart; xx < Lampwidth; xx++)
                                         {
-                                            finaldegreereverse += buff6 * Lamps[xx].LightDegree;
+
+                                            double buff1 = (Lamps[xx, yy].X - x);
+                                            double buff2 = (Lamps[xx, yy].Y - y);
+
+                                            if (buff1 > 30)
+                                            {
+                                                if (buff2 > 30)
+                                                {
+                                                    endflag = true;
+                                                }
+                                                break;
+                                            }
+
+                                            if (((buff1 * buff1 + buff2 * buff2) > 1000))
+                                            {
+                                                continue;
+                                            }
+
+
+                                            double buff3 = Lamps[xx, yy].LightDistance;
+
+                                            double buff4 = Math.Sqrt(buff1 * buff1 + buff2 * buff2 + buff3 * buff3);
+                                            double buff5 = buff3 / buff4;
+                                            //Lamps[xx].LightDegree
+                                            double buff6 = buff5 * Math.Exp(-buff4 / (3 * Definition));
+
+                                            finaldegreereverse += buff6 * Lamps[xx, yy].LightDegree;
+
+
+
                                         }
-
-
+                                        if (endflag)
+                                        {
+                                            break;
+                                        }
                                     }
 
                                     //double finaldegree = LightUpChange3(finaldegreereverse);
                                     double finaldegree = finaldegreereverse;
 
-                                    p[RGB.R] = (byte)(p[RGB.R] * Math.Min(1, (finaldegree)));
-                                    p[RGB.G] = (byte)(p[RGB.G] * Math.Min(1, (finaldegree)));
-                                    p[RGB.B] = (byte)(p[RGB.B] * Math.Min(1, (finaldegree)));
+                                    double rrr = Math.Min(1, (finaldegree));
+
+                                    double Env = 1 - (0.1 + rrr * 0.6);
+
+
+                                    //double finalrrr = (1 - Env*(1 - rrr));
+                                    double finalrrr = (1 - Env * (1 - rrr * 0.7));
+
+
+                                    p[RGB.R] = (byte)(p[RGB.R] * finalrrr);
+                                    p[RGB.G] = (byte)(p[RGB.G] * finalrrr);
+                                    p[RGB.B] = (byte)(p[RGB.B] * finalrrr);
+
 
                                 }
 
@@ -480,7 +665,7 @@ namespace PictureSuperMix
                     curbitmap.Dispose();
                     curbitmapsource.Dispose();
                     Videochange.Dispose();
-
+                    bitmapchange.Dispose();
 
                 }
                 readerzzz.Close();

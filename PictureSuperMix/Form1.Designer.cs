@@ -573,11 +573,13 @@
             // label12
             // 
             this.label12.AutoSize = true;
-            this.label12.Location = new System.Drawing.Point(516, 141);
+            this.label12.Font = new System.Drawing.Font("宋体", 24F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(134)));
+            this.label12.Location = new System.Drawing.Point(152, 9);
             this.label12.Name = "label12";
-            this.label12.Size = new System.Drawing.Size(23, 12);
+            this.label12.Size = new System.Drawing.Size(127, 33);
             this.label12.TabIndex = 48;
-            this.label12.Text = "100";
+            this.label12.Text = "1000000";
+            this.label12.Click += new System.EventHandler(this.label12_Click);
             // 
             // Form1
             // 

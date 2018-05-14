@@ -1917,26 +1917,37 @@ namespace PictureSuperMix
 
         private void button16_Click(object sender, EventArgs e)
         {
+            double g_w = 192;
+            double g_h = 80;
+            double times = 2;
 
+            double Definition = 1;
 
-            int Definition = 1;
 
             label12.Text = "开始计时";
 
 
             DateTime dt = DateTime.Now;
 
-            //读取图片
-            Bitmap curbitmap = new Bitmap(Image.FromFile(textBox5.Text));
+            //读取背景图片并转换为指定大小
+
+            Bitmap Videochangebuf = new Bitmap(Image.FromFile(textBox5.Text));
+            Bitmap curbitmap = new Bitmap(Videochangebuf, (int)(g_w * 4* times), (int)(g_h * 4 * times));
+
             //锁定图片
             BitmapData curimageData = curbitmap.LockBits(new Rectangle(0, 0, curbitmap.Width, curbitmap.Height),
             ImageLockMode.ReadOnly, curbitmap.PixelFormat);
 
-            //读取效果图片
-            Bitmap effbitmap= new Bitmap(Image.FromFile(textBox6.Text));
+            //读取效果图片并转换为指定大小
+            Videochangebuf = new Bitmap(Image.FromFile(textBox6.Text));
+            Bitmap effbitmap = new Bitmap(Videochangebuf, (int)(g_w ), (int)(g_h ));
 
+            //锁定图片
             BitmapData curimageData2 = effbitmap.LockBits(new Rectangle(0, 0, effbitmap.Width, effbitmap.Height),
             ImageLockMode.ReadOnly, effbitmap.PixelFormat);
+
+            //释放转换图片缓存
+            Videochangebuf.Dispose();
 
             //###########################left###########################//
             unsafe
@@ -1968,6 +1979,7 @@ namespace PictureSuperMix
                     int Lampheight = height2;
 
                     PointSource[,] Lamps = new PointSource[Lampwidth,Lampheight];
+                    double[,] LampBuff = new double[width, height];
 
                     double lightlevel = 0;
 
@@ -1978,17 +1990,16 @@ namespace PictureSuperMix
                             Lamps[xx ,yy].X = xx * 4* Definition + 2;
                             Lamps[xx, yy].Y = yy * 4 * Definition + 2;
                             Lamps[xx, yy].LightDegree = (((double)1 * (double)p2[RGB.R]) / (double)255);
-                            Lamps[xx, yy].LightDistance = 6.25 * Definition;
+                            Lamps[xx, yy].LightDistance =6.25 * Definition;
 
                             lightlevel += Lamps[xx, yy].LightDegree;
                         }
                     }
-                    lightlevel = lightlevel/(Lampheight * Lampwidth*15);
+                    lightlevel = lightlevel/(Lampheight * Lampwidth);
 
                     // for each line
                     for (int y = 0; y < height; y++)
                     {
-
                         // for each pixel
                         for (int x = 0; x < width; x++, p += pixelSize)
                         {
@@ -1996,11 +2007,13 @@ namespace PictureSuperMix
                             double finaldegreereverse = 0;
                             bool endflag=false;
 
-                            int yystart = Math.Max(0,y / 4 - 8);
+                            int yystart = (int)Math.Max(0,y/ (4 * Definition)-16* Definition);
+                            //int yystart = 0;
 
                             for (int yy = yystart; yy < Lampheight; yy++)
                             {
-                                int xxstart = Math.Max(0, x / 4 - 8);
+                                int xxstart = (int)Math.Max(0, x / (4 * Definition)- 16 * Definition);
+                                //int xxstart = 0;
 
                                 for (int xx = xxstart; xx < Lampwidth; xx++)
                                 {
@@ -2008,16 +2021,17 @@ namespace PictureSuperMix
                                     double buff1 = (Lamps[xx, yy].X - x);
                                     double buff2 = (Lamps[xx, yy].Y - y);
 
-                                    if (buff1 > 30)
+                                    //像素跳跃
+                                    if (buff1 > (16* Definition))
                                     {
-                                        if(buff2>30)
+                                        if (buff2 > (16 * Definition ))
                                         {
                                             endflag = true;
-                                        }          
+                                        }
                                         break;
                                     }
 
-                                    if (((buff1 * buff1 + buff2 * buff2) > 1000))
+                                    if (((buff1 * buff1 + buff2 * buff2) > (1000* Definition * Definition)))
                                     {
                                         continue;
                                     }
@@ -2028,7 +2042,7 @@ namespace PictureSuperMix
                                     double buff4 = Math.Sqrt(buff1 * buff1 + buff2 * buff2 + buff3 * buff3);
                                     double buff5 = buff3 / buff4;
                                     //Lamps[xx].LightDegree
-                                    double buff6 = buff5 * Math.Exp(-buff4 / (3 * Definition));
+                                    double buff6 = buff5 * Math.Exp(-buff4 * buff4/27);
 
                                     finaldegreereverse += buff6 * Lamps[xx, yy].LightDegree;
 
@@ -2044,9 +2058,15 @@ namespace PictureSuperMix
                             //double finaldegree = LightUpChange3(finaldegreereverse);
                             double finaldegree = finaldegreereverse;
 
+
+                            if(Max< finaldegree)
+                            {
+                                Max = finaldegree;
+                            }
+
                             double rrr = Math.Min(1, (finaldegree));
 
-                            double Env = 1-(0.1+ rrr*0.6);
+                            double Env = 1-(0.1+ 0.25* lightlevel);
 
 
                             //double finalrrr = (1 - Env*(1 - rrr));
@@ -2058,7 +2078,7 @@ namespace PictureSuperMix
                             p[RGB.R] = (byte)(p[RGB.R] * finalrrr);
                             p[RGB.G] = (byte)(p[RGB.G] * finalrrr);
                             p[RGB.B] = (byte)(p[RGB.B] * finalrrr);
-                            label12.Text = Convert.ToString(Max);
+                            label13.Text = Convert.ToString(Max);
                         }
 
                     }
@@ -2107,6 +2127,193 @@ namespace PictureSuperMix
 
         private void label12_Click(object sender, EventArgs e)
         {
+
+        }
+
+        private void button19_Click(object sender, EventArgs e)
+        {
+
+
+
+            label12.Text = "开始计时";
+
+
+            DateTime dt = DateTime.Now;
+
+            //读取背景图片并转换为指定大小
+
+            Bitmap curbitmap = new Bitmap(Image.FromFile(textBox5.Text));
+
+            //锁定图片
+            BitmapData curimageData = curbitmap.LockBits(new Rectangle(0, 0, curbitmap.Width, curbitmap.Height),
+            ImageLockMode.ReadOnly, curbitmap.PixelFormat);
+
+            //读取效果图片并转换为指定大小
+
+            Bitmap effbitmap = new Bitmap(Image.FromFile(textBox6.Text));
+
+            //锁定图片
+            BitmapData curimageData2 = effbitmap.LockBits(new Rectangle(0, 0, effbitmap.Width, effbitmap.Height),
+            ImageLockMode.ReadOnly, effbitmap.PixelFormat);
+
+
+            //###########################left###########################//
+            unsafe
+            {
+                //Count red and black pixels
+                try
+                {
+                    //背景图片
+                    UnmanagedImage img = new UnmanagedImage(curimageData);
+
+                    int height = img.Height;
+                    int width = img.Width;
+                    int pixelSize = (img.PixelFormat == PixelFormat.Format24bppRgb) ? 3 : 4;
+                    byte* p = (byte*)img.ImageData.ToPointer();
+
+                    //效果图片
+
+                    UnmanagedImage img2 = new UnmanagedImage(curimageData2);
+
+                    int height2 = img2.Height;
+                    int width2 = img2.Width;
+                    int pixelSize2 = (img2.PixelFormat == PixelFormat.Format24bppRgb) ? 3 : 4;
+                    byte* p2 = (byte*)img2.ImageData.ToPointer();
+
+
+                    double Max = 0;
+
+                    int Lampwidth = width2;
+                    int Lampheight = height2;
+
+                    PointSource[,] Lamps = new PointSource[Lampwidth, Lampheight];
+                    double[,] LampBuff = new double[width, height];
+
+                    double lightlevel = 0;
+
+                    for (int yy = 0; yy < Lampheight; yy++)
+                    {
+                        for (int xx = 0; xx < Lampwidth; xx++, p2 += pixelSize2)
+                        {
+                            Lamps[xx, yy].X = xx * 4 * + 2;
+                            Lamps[xx, yy].Y = yy * 4  + 2;
+                            Lamps[xx, yy].LightDegree = (((double)1 * (double)p2[RGB.R]) / (double)255);
+                            Lamps[xx, yy].LightDistance = 6.25  ;
+
+                            lightlevel += Lamps[xx, yy].LightDegree;
+                        }
+                    }
+                    lightlevel = lightlevel / (Lampheight * Lampwidth);
+
+                    // for each line
+                    for (int y = 0; y < height; y++)
+                    {
+                        // for each pixel
+                        for (int x = 0; x < width; x++, p += pixelSize)
+                        {
+
+                            double finaldegreereverse = 0;
+                            bool endflag = false;
+
+                            //int yystart = (int)Math.Max(0, y / (4  ) - 16  );
+                            int yystart = 0;
+
+                            for (int yy = yystart; yy < Lampheight; yy++)
+                            {
+                                //int xxstart = (int)Math.Max(0, x / (4) - 16  );
+                                int xxstart = 0;
+
+                                for (int xx = xxstart; xx < Lampwidth; xx++)
+                                {
+
+                                    double buff1 = (Lamps[xx, yy].X - x);
+                                    double buff2 = (Lamps[xx, yy].Y - y);
+
+                                    //像素跳跃
+                                    /*
+                                    if (buff1 > (16  ))
+                                    {
+                                        if (buff2 > (16  ))
+                                        {
+                                            endflag = true;
+                                        }
+                                        break;
+                                    }
+
+
+                                    if (((buff1 * buff1 + buff2 * buff2) > (1000    )))
+                                    {
+                                        continue;
+                                    }
+                                    */
+
+                                    double buff3 = Lamps[xx, yy].LightDistance;
+
+                                    double buff4 = Math.Sqrt(buff1 * buff1 + buff2 * buff2 + buff3 * buff3);
+                                    double buff5 = buff3 / buff4;
+                                    //Lamps[xx].LightDegree
+                                    double buff6 = buff5;               //* Math.Exp(-buff4 * buff4 / 27);
+
+                                    finaldegreereverse += buff6 * Lamps[xx, yy].LightDegree;
+
+
+
+                                }
+                                if (endflag)
+                                {
+                                    break;
+                                }
+                            }
+
+                            //double finaldegree = LightUpChange3(finaldegreereverse);
+                            double finaldegree = finaldegreereverse;
+
+
+                            if (Max < finaldegree)
+                            {
+                                Max = finaldegree;
+                            }
+
+                            double rrr = Math.Min(1, (finaldegree));
+
+                            double Env = 1 - (0.1 + 0.25 * lightlevel);
+
+
+                            //double finalrrr = (1 - Env*(1 - rrr));
+                            double finalrrr = (1 - Env * (1 - rrr * 0.7));
+
+
+
+
+                            p[RGB.R] = (byte)(p[RGB.R] * rrr);
+                            p[RGB.G] = (byte)(p[RGB.G] * rrr);
+                            p[RGB.B] = (byte)(p[RGB.B] * rrr);
+                            label13.Text = Convert.ToString(Max);
+                        }
+
+                    }
+
+                }
+                finally
+                {
+                    curbitmap.UnlockBits(curimageData); //Unlock
+                    effbitmap.UnlockBits(curimageData2);
+                }
+
+            }
+
+
+            string zzzzz = OriPath + "\\aa.bmp";
+
+
+            curbitmap.Save(zzzzz, System.Drawing.Imaging.ImageFormat.Bmp);
+
+            curbitmap.Dispose();
+
+
+            TimeSpan dt2 = DateTime.Now - dt;
+
+            label12.Text = dt2.ToString();
 
         }
     }

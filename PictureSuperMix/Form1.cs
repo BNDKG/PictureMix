@@ -493,12 +493,12 @@ namespace PictureSuperMix
                                         if (endflag) { break; }
                                     }
 
-                                    double finaldegree = finaldegreereverse;
+                                    //double finaldegree = finaldegreereverse;
 
-                                    double rrr = Math.Min(1, (finaldegree));
-                                    double Env = 1 - (0.1 + 0.25 * lightlevel);
+                                    double rrr = Math.Min(1, (finaldegreereverse));
+                                    double Env = 1 - ((1- Envpercent)*0.5 + 0.25 * lightlevel);
 
-                                    LampBuff[x, y] = (1 - Env * (1 - rrr * 0.7));
+                                    LampBuff[x, y] = (1 - Env * (1 - rrr * shadowpercent));
 
                                 }
                             }

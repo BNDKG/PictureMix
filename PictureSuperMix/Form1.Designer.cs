@@ -45,8 +45,8 @@
             this.trackBar2 = new System.Windows.Forms.TrackBar();
             this.button1 = new System.Windows.Forms.Button();
             this.panel1 = new System.Windows.Forms.Panel();
-            this.radioButton1 = new System.Windows.Forms.RadioButton();
             this.radioButton2 = new System.Windows.Forms.RadioButton();
+            this.radioButton1 = new System.Windows.Forms.RadioButton();
             ((System.ComponentModel.ISupportInitialize)(this.trackBar1)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.trackBar2)).BeginInit();
             this.panel1.SuspendLayout();
@@ -64,7 +64,7 @@
             // 
             // button8
             // 
-            this.button8.Location = new System.Drawing.Point(180, 31);
+            this.button8.Location = new System.Drawing.Point(180, 40);
             this.button8.Name = "button8";
             this.button8.Size = new System.Drawing.Size(226, 53);
             this.button8.TabIndex = 31;
@@ -74,7 +74,7 @@
             // 
             // progressBar1
             // 
-            this.progressBar1.Location = new System.Drawing.Point(180, 89);
+            this.progressBar1.Location = new System.Drawing.Point(180, 99);
             this.progressBar1.Name = "progressBar1";
             this.progressBar1.Size = new System.Drawing.Size(226, 10);
             this.progressBar1.Step = 1;
@@ -150,7 +150,7 @@
             this.label8.Name = "label8";
             this.label8.Size = new System.Drawing.Size(59, 12);
             this.label8.TabIndex = 39;
-            this.label8.Text = "投影亮度:";
+            this.label8.Text = "设备亮度:";
             // 
             // label1
             // 
@@ -198,6 +198,17 @@
             this.panel1.Size = new System.Drawing.Size(226, 44);
             this.panel1.TabIndex = 44;
             // 
+            // radioButton2
+            // 
+            this.radioButton2.AutoSize = true;
+            this.radioButton2.Location = new System.Drawing.Point(80, 14);
+            this.radioButton2.Name = "radioButton2";
+            this.radioButton2.Size = new System.Drawing.Size(71, 16);
+            this.radioButton2.TabIndex = 1;
+            this.radioButton2.TabStop = true;
+            this.radioButton2.Text = "幕动光源";
+            this.radioButton2.UseVisualStyleBackColor = true;
+            // 
             // radioButton1
             // 
             this.radioButton1.AutoSize = true;
@@ -210,17 +221,6 @@
             this.radioButton1.Text = "智能投影";
             this.radioButton1.UseVisualStyleBackColor = true;
             this.radioButton1.CheckedChanged += new System.EventHandler(this.radioButton1_CheckedChanged);
-            // 
-            // radioButton2
-            // 
-            this.radioButton2.AutoSize = true;
-            this.radioButton2.Location = new System.Drawing.Point(128, 14);
-            this.radioButton2.Name = "radioButton2";
-            this.radioButton2.Size = new System.Drawing.Size(71, 16);
-            this.radioButton2.TabIndex = 1;
-            this.radioButton2.TabStop = true;
-            this.radioButton2.Text = "幕动光源";
-            this.radioButton2.UseVisualStyleBackColor = true;
             // 
             // Form1
             // 

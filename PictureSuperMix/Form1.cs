@@ -582,7 +582,7 @@ namespace PictureSuperMix
             else
             {
                 endflag = true;
-                button8.Text = "视频效果转换";
+                button8.Text = "视频合成";
             }
         }
 
@@ -637,13 +637,46 @@ namespace PictureSuperMix
         private void textBox5_DragDrop_1(object sender, DragEventArgs e)
         {
             string path = ((System.Array)e.Data.GetData(DataFormats.FileDrop)).GetValue(0).ToString();
-            textBox5.Text = path; 
+            textBox5.Text = path;
+
+            try
+            {
+                Bitmap b = new Bitmap(path);
+                pictureBox1.Image = b;
+            }
+            catch
+            {
+                MessageBox.Show(" 请拖入 正确 的图片文件 ");
+                return;
+            }
+
+
         }
 
         private void textBox6_DragDrop_1(object sender, DragEventArgs e)
         {
             string path = ((System.Array)e.Data.GetData(DataFormats.FileDrop)).GetValue(0).ToString();
-            textBox6.Text = path; 
+            textBox6.Text = path;
+
+            try
+            {
+                // 生成视频生成读取器
+                VideoFileReader readerzzz2 = new VideoFileReader();
+                // 打开视频
+                readerzzz2.Open(path);
+
+                Bitmap b = readerzzz2.ReadVideoFrame();
+
+                pictureBox2.Image = b;
+
+                readerzzz2.Dispose();
+            }
+            catch
+            {
+                MessageBox.Show(" 请拖入 正确 的视频文件 ");
+                return;
+            }
+
         }
 
         private void trackBar1_Scroll(object sender, EventArgs e)
@@ -685,6 +718,35 @@ namespace PictureSuperMix
         private void radioButton1_CheckedChanged(object sender, EventArgs e)
         {
 
+        }
+
+        private void radioButton2_CheckedChanged(object sender, EventArgs e)
+        {
+
+        }
+
+        private void button3_Click(object sender, EventArgs e)
+        {
+            this.WindowState = FormWindowState.Minimized;
+        }
+
+        private void button4_Click(object sender, EventArgs e)
+        {
+            System.Environment.Exit(0);
+        }
+        //用于鼠标拖动
+        private Point mPoint;
+        private void Form1_MouseDown(object sender, MouseEventArgs e)
+        {
+            mPoint = new Point(e.X, e.Y);
+        }
+
+        private void Form1_MouseMove(object sender, MouseEventArgs e)
+        {
+            if (e.Button == MouseButtons.Left)
+            {
+                this.Location = new Point(this.Location.X + e.X - mPoint.X, this.Location.Y + e.Y - mPoint.Y);
+            }
         }
     }
 }

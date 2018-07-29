@@ -352,8 +352,8 @@ namespace PictureSuperMix
         }
         private void aforgereadtest2()
         {
-
-            double g_w = 192;
+            //P16版本
+            double g_w = 196;
             double g_h = 128;
             double times = 2;
 
@@ -660,6 +660,8 @@ namespace PictureSuperMix
 
             try
             {
+                axWindowsMediaPlayer1.close();
+                /*
                 // 生成视频生成读取器
                 VideoFileReader readerzzz2 = new VideoFileReader();
                 // 打开视频
@@ -670,6 +672,12 @@ namespace PictureSuperMix
                 pictureBox2.Image = b;
 
                 readerzzz2.Dispose();
+                */
+
+                axWindowsMediaPlayer1.URL = path;
+                axWindowsMediaPlayer1.settings.setMode("loop", true);
+
+                bottonchange();
             }
             catch
             {
@@ -748,5 +756,41 @@ namespace PictureSuperMix
                 this.Location = new Point(this.Location.X + e.X - mPoint.X, this.Location.Y + e.Y - mPoint.Y);
             }
         }
+
+        private void button5_Click(object sender, EventArgs e)
+        {
+            axWindowsMediaPlayer1.close();
+        }
+
+        private void button5_Click_1(object sender, EventArgs e)
+        {
+            bottonchange();
+
+        }
+
+        private void bottonchange()
+        {
+            string test2 = axWindowsMediaPlayer1.URL;
+            if (test2 == "")
+            {
+                return;
+            }
+
+            int test = (int)axWindowsMediaPlayer1.playState;
+
+            if (test == 3)
+            {
+                button5.Font = new Font(button5.Font.Name, 14);
+                button5.Text = "▷";
+                axWindowsMediaPlayer1.Ctlcontrols.pause();
+            }
+            else
+            {
+                button5.Font = new Font(button5.Font.Name, 9);
+                button5.Text = "■";
+                axWindowsMediaPlayer1.Ctlcontrols.play();
+            }
+        }
+
     }
 }

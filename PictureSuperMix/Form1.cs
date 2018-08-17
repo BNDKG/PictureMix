@@ -569,13 +569,13 @@ namespace PictureSuperMix
             //将input文件夹中的视频全部生成视频
 
 
-            int width = 1280;
-            int height = 800;
+            int width = 640;
+            int height = 400;
 
 
             VideoFileWriter writer = new VideoFileWriter();
 
-            writer.Open("sample-video.mp4", width, height, 25, VideoCodec.MPEG4, 25000000);
+            writer.Open("sample-video.mp4", width, height, 60, VideoCodec.MPEG4, 25000000);
 
             Bitmap image = new Bitmap(width, height);
 
@@ -648,9 +648,13 @@ namespace PictureSuperMix
             double startpoint = 0;
             int changepoint = 1;
 
+            byte[,] randomarray = new byte[320, 200];
+
+            Random rnd2 = new Random(Guid.NewGuid().GetHashCode());
+
             for (int i = 0; i < 512; i++)
             {
-                Bitmap curbitmap = new System.Drawing.Bitmap(1280, 800);
+                Bitmap curbitmap = new System.Drawing.Bitmap(640, 400);
 
                 BitmapData curimageData = curbitmap.LockBits(new Rectangle(0, 0, curbitmap.Width, curbitmap.Height),
                 ImageLockMode.ReadOnly, curbitmap.PixelFormat);
@@ -675,6 +679,8 @@ namespace PictureSuperMix
                         int xall = board_adj.GetLength(1);
 
 
+
+
                         int cur_value = (int)startpoint;
                         int cur_changpoint = changepoint;
 
@@ -686,7 +692,7 @@ namespace PictureSuperMix
                             // for each pixel
                             for (int x = 0; x < width; x++, p += pixelSize)
                             {
-
+                                //cur_value = rnd2.Next(255);
                                 p[RGB.R] = (byte)cur_value;
                                 p[RGB.G] = (byte)cur_value;
                                 p[RGB.B] = (byte)cur_value;
@@ -708,12 +714,17 @@ namespace PictureSuperMix
                 string zzzzz = picdic + "\\dd" + sdf + ".bmp";
 
 
-                curbitmap.Save(zzzzz, System.Drawing.Imaging.ImageFormat.Bmp);
+                curbitmap.Save(zzzzz, System.Drawing.Imaging.ImageFormat.Jpeg);
 
                 curbitmap.Dispose();
 
                 //变换率
-                double changerate2 = 1;
+                double changerate2 = 2;
+
+                    
+                //changerate2 = (Math.Abs(startpoint - 60)/30+1);
+                
+
                 if (changepoint > 0)
                 {
                     startpoint = startpoint + changerate2;

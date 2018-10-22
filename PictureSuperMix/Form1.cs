@@ -569,13 +569,13 @@ namespace PictureSuperMix
             //将input文件夹中的视频全部生成视频
 
 
-            int width = 640;
-            int height = 400;
+            int width = 1280;
+            int height = 800;
 
 
             VideoFileWriter writer = new VideoFileWriter();
 
-            writer.Open("sample-video.mp4", width, height, 60, VideoCodec.MPEG4, 25000000);
+            writer.Open("sample-video.mp4", width, height, 25, VideoCodec.MPEG4, 25000);
 
             Bitmap image = new Bitmap(width, height);
 
@@ -627,7 +627,7 @@ namespace PictureSuperMix
 
             writer.Close();
 
-            Application.Exit();
+            //Application.Exit();
             
         }
 
@@ -652,9 +652,9 @@ namespace PictureSuperMix
 
             Random rnd2 = new Random(Guid.NewGuid().GetHashCode());
 
-            for (int i = 0; i < 512; i++)
+            for (int i = 0; i < 256; i++)
             {
-                Bitmap curbitmap = new System.Drawing.Bitmap(640, 400);
+                Bitmap curbitmap = new System.Drawing.Bitmap(1280, 800);
 
                 BitmapData curimageData = curbitmap.LockBits(new Rectangle(0, 0, curbitmap.Width, curbitmap.Height),
                 ImageLockMode.ReadOnly, curbitmap.PixelFormat);
@@ -728,18 +728,108 @@ namespace PictureSuperMix
                 if (changepoint > 0)
                 {
                     startpoint = startpoint + changerate2;
-                    if (startpoint >= 255)
+                    if (startpoint >= 200)
                     {
-                        startpoint = 255;
+                        startpoint = 200;
                         changepoint = -1;
                     }
                 }
                 else
                 {
                     startpoint = startpoint - changerate2;
-                    if (startpoint <= 0)
+                    if (startpoint <= 50)
                     {
-                        startpoint = 0;
+                        startpoint = 50;
+                        changepoint = 1;
+                    }
+                }
+            }
+        }
+
+        private void huaping()
+        {
+                        double startpoint = 0;
+            int changepoint = 1;
+
+            byte[,] randomarray = new byte[320, 200];
+
+            Random rnd2 = new Random(Guid.NewGuid().GetHashCode());
+
+            for (int i = 0; i < 256; i++)
+            {
+                Bitmap curbitmap = new System.Drawing.Bitmap(1280, 800);
+
+                BitmapData curimageData = curbitmap.LockBits(new Rectangle(0, 0, curbitmap.Width, curbitmap.Height),
+                ImageLockMode.ReadOnly, curbitmap.PixelFormat);
+
+                //###########################left###########################//
+                unsafe
+                {
+                    //Count red and black pixels
+                    try
+                    {
+                        UnmanagedImage img = new UnmanagedImage(curimageData);
+
+                        int height = img.Height;
+                        int width = img.Width;
+                        int pixelSize = (img.PixelFormat == PixelFormat.Format24bppRgb) ? 3 : 4;
+                        byte* p = (byte*)img.ImageData.ToPointer();
+
+                        // for each line
+                        for (int y = 0; y < height; y++)
+                        {
+
+                            // for each pixel
+                            for (int x = 0; x < width; x++, p += pixelSize)
+                            {
+                                int cur_value = rnd2.Next(255);
+                                p[RGB.R] = (byte)cur_value;
+                                p[RGB.G] = (byte)cur_value;
+                                p[RGB.B] = (byte)cur_value;
+
+                            }
+
+                        }
+
+                    }
+                    finally
+                    {
+                        curbitmap.UnlockBits(curimageData); //Unlock
+                    }
+
+                }
+                string sdf = String.Format("{0:D4}", i);
+
+
+                string zzzzz = picdic + "\\dd" + sdf + ".bmp";
+
+
+                curbitmap.Save(zzzzz, System.Drawing.Imaging.ImageFormat.Jpeg);
+
+                curbitmap.Dispose();
+
+                //变换率
+                double changerate2 = 2;
+
+                    
+                //changerate2 = (Math.Abs(startpoint - 60)/30+1);
+                
+
+                if (changepoint > 0)
+                {
+                    startpoint = startpoint + changerate2;
+                    if (startpoint >= 200)
+                    {
+                        startpoint = 200;
+                        changepoint = -1;
+                    }
+                }
+                else
+                {
+                    startpoint = startpoint - changerate2;
+                    if (startpoint <= 50)
+                    {
+                        startpoint = 50;
                         changepoint = 1;
                     }
                 }
@@ -2545,6 +2635,11 @@ namespace PictureSuperMix
             TimeSpan dt2 = DateTime.Now - dt;
 
             label12.Text = dt2.ToString();
+        }
+
+        private void button21_Click(object sender, EventArgs e)
+        {
+            huaping();
         }
     }
 }

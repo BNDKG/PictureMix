@@ -59,6 +59,7 @@
             this.axWindowsMediaPlayer1 = new AxWMPLib.AxWindowsMediaPlayer();
             this.label10 = new System.Windows.Forms.Label();
             this.button5 = new System.Windows.Forms.Button();
+            this.button6 = new System.Windows.Forms.Button();
             ((System.ComponentModel.ISupportInitialize)(this.trackBar1)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.trackBar2)).BeginInit();
             this.panel1.SuspendLayout();
@@ -74,7 +75,7 @@
             this.button2.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(86)))), ((int)(((byte)(156)))), ((int)(((byte)(214)))));
             this.button2.Location = new System.Drawing.Point(368, 136);
             this.button2.Name = "button2";
-            this.button2.Size = new System.Drawing.Size(87, 30);
+            this.button2.Size = new System.Drawing.Size(67, 30);
             this.button2.TabIndex = 2;
             this.button2.Text = "输出路径";
             this.toolTip1.SetToolTip(this.button2, "打开程序所在路径");
@@ -226,9 +227,9 @@
             this.button1.FlatAppearance.BorderColor = System.Drawing.Color.Black;
             this.button1.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
             this.button1.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(86)))), ((int)(((byte)(156)))), ((int)(((byte)(214)))));
-            this.button1.Location = new System.Drawing.Point(458, 136);
+            this.button1.Location = new System.Drawing.Point(436, 136);
             this.button1.Name = "button1";
-            this.button1.Size = new System.Drawing.Size(100, 30);
+            this.button1.Size = new System.Drawing.Size(67, 30);
             this.button1.TabIndex = 43;
             this.button1.Text = "合成播放";
             this.toolTip1.SetToolTip(this.button1, "用默认播放器打开生成视频");
@@ -384,13 +385,28 @@
             this.button5.UseVisualStyleBackColor = true;
             this.button5.Click += new System.EventHandler(this.button5_Click_1);
             // 
+            // button6
+            // 
+            this.button6.FlatAppearance.BorderColor = System.Drawing.Color.Black;
+            this.button6.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
+            this.button6.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(86)))), ((int)(((byte)(156)))), ((int)(((byte)(214)))));
+            this.button6.Location = new System.Drawing.Point(504, 136);
+            this.button6.Name = "button6";
+            this.button6.Size = new System.Drawing.Size(67, 30);
+            this.button6.TabIndex = 54;
+            this.button6.Text = "幕动生成";
+            this.toolTip1.SetToolTip(this.button6, "生成幕动光源播放视频");
+            this.button6.UseVisualStyleBackColor = true;
+            this.button6.Click += new System.EventHandler(this.button6_Click);
+            // 
             // Form1
             // 
             this.AllowDrop = true;
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 12F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(45)))), ((int)(((byte)(45)))), ((int)(((byte)(48)))));
-            this.ClientSize = new System.Drawing.Size(573, 401);
+            this.ClientSize = new System.Drawing.Size(583, 401);
+            this.Controls.Add(this.button6);
             this.Controls.Add(this.button5);
             this.Controls.Add(this.progressBar1);
             this.Controls.Add(this.label10);
@@ -466,6 +482,7 @@
         private AxWMPLib.AxWindowsMediaPlayer axWindowsMediaPlayer1;
         private System.Windows.Forms.Label label10;
         private System.Windows.Forms.Button button5;
+        private System.Windows.Forms.Button button6;
     }
 }
 

@@ -748,7 +748,7 @@ namespace PictureSuperMix
 
         private void huaping()
         {
-                        double startpoint = 0;
+            double startpoint = 0;
             int changepoint = 1;
 
             byte[,] randomarray = new byte[320, 200];
@@ -2641,5 +2641,115 @@ namespace PictureSuperMix
         {
             huaping();
         }
+
+        private void button22_Click(object sender, EventArgs e)
+        {
+            Random rnd2 = new Random(Guid.NewGuid().GetHashCode());
+
+            Bitmap curbitmap = new System.Drawing.Bitmap(768, 256);
+
+            BitmapData curimageData = curbitmap.LockBits(new Rectangle(0, 0, curbitmap.Width, curbitmap.Height),
+            ImageLockMode.ReadOnly, curbitmap.PixelFormat);
+
+            //###########################left###########################//
+            unsafe
+            {
+                //Count red and black pixels
+                try
+                {
+                    UnmanagedImage img = new UnmanagedImage(curimageData);
+
+                    int height = img.Height;
+                    int width = img.Width;
+                    int pixelSize = (img.PixelFormat == PixelFormat.Format24bppRgb) ? 3 : 4;
+                    byte* p = (byte*)img.ImageData.ToPointer();
+
+                    double ylevel = ((double)img.Height) / board_adj.GetLength(0);
+                    double xlevel = ((double)img.Width) / board_adj.GetLength(1);
+
+                    int yall = board_adj.GetLength(0);
+                    int xall = board_adj.GetLength(1);
+
+                    //先配置大块颜色块
+                    Color[,] buff3 = new Color[24, 8];
+
+                    int rl = 245;
+                    int gl = 5;
+                    int bl = 5;
+
+                    // for each line
+                    for (int y = 0; y < 8; y++)
+                    {
+                        // for each pixel
+                        for (int x = 0; x < 24; x++)
+                        {
+                            //cur_value = rnd2.Next(255);
+                            //全随机图片
+                            //buff3[x, y] = Color.FromArgb(255, (byte)x *10, (byte)y*30, (byte)rnd2.Next(255));
+                            //部分网格状图片
+                            //buff3[x, y] = Color.FromArgb(255, (byte)(curlevel % 36) / 6 * 50, (byte)curlevel % 6 * 50, (byte)curlevel / 36 * 45);
+                            int curlevel = 0 ;
+
+                            int[,] stages = { { 0, -1, 0, 0, 1, 0 }, { 1, 0, 0, -1, 0, 0 }, { 0, 0, 1, 0, 0, -1 } };
+
+                            int r2 = rl - (rl - 128) * y / 7;
+                            int g2 = gl - (gl - 128) * y / 7;
+                            int b2 = bl - (bl - 128) * y / 7;
+
+                            if (y > 5 && x<12)
+                            {
+                                int xxe = x * 2 + y - 6;
+                                buff3[x, y] = Color.FromArgb(255, (byte)xxe*10, (byte)xxe * 10, (byte)xxe * 10);
+                            }
+                            else if(y > 5)
+                            {
+                                buff3[x, y] = Color.FromArgb(255, (byte)255, (byte)255, (byte)255);
+
+                            }
+                            else{
+                                //亮度变换
+                                //buff3[x, y] = Color.FromArgb(255, (byte)rl * y / 7, (byte)gl * y / 7, (byte)bl * y / 7);
+                                //
+                                buff3[x, y] = Color.FromArgb(255, (byte)r2, (byte)g2, (byte)b2);
+                            }
+
+                            rl += stages[0, x/4] * 60;
+                            gl += stages[1, x/4] * 60;
+                            bl += stages[2, x/4] * 60;
+                        }
+                    }
+                    // for each line
+                    for (int y = 0; y < height; y++)
+                    {
+                        // for each pixel
+                        for (int x = 0; x < width; x++, p += pixelSize)
+                        {
+                            //cur_value = rnd2.Next(255);
+                            p[RGB.R] = (byte)buff3[x / 32, y / 32].R;
+                            p[RGB.G] = (byte)buff3[x / 32, y / 32].G;
+                            p[RGB.B] = (byte)buff3[x / 32, y / 32].B;
+
+                        }
+
+                    }
+
+                }
+                finally
+                {
+                    curbitmap.UnlockBits(curimageData); //Unlock
+                }
+
+            }
+
+
+            string zzzzz = picdic + "\\test"  + ".bmp";
+
+
+            curbitmap.Save(zzzzz, System.Drawing.Imaging.ImageFormat.Bmp);
+
+            curbitmap.Dispose();
+        }
+
+
     }
 }

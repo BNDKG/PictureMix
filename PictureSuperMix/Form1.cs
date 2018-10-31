@@ -2646,7 +2646,9 @@ namespace PictureSuperMix
         {
             Random rnd2 = new Random(Guid.NewGuid().GetHashCode());
 
-            Bitmap curbitmap = new System.Drawing.Bitmap(768, 256);
+            int Rate = 200;
+
+            Bitmap curbitmap = new System.Drawing.Bitmap(24*Rate, 8*Rate);
 
             BitmapData curimageData = curbitmap.LockBits(new Rectangle(0, 0, curbitmap.Width, curbitmap.Height),
             ImageLockMode.ReadOnly, curbitmap.PixelFormat);
@@ -2699,7 +2701,9 @@ namespace PictureSuperMix
                             if (y > 5 && x<12)
                             {
                                 int xxe = x * 2 + y - 6;
-                                buff3[x, y] = Color.FromArgb(255, (byte)xxe*10, (byte)xxe * 10, (byte)xxe * 10);
+
+
+                                buff3[x, y] = Color.FromArgb(255, (byte)xxe*11, (byte)xxe * 11, (byte)xxe * 11);
                             }
                             else if(y > 5)
                             {
@@ -2725,9 +2729,9 @@ namespace PictureSuperMix
                         for (int x = 0; x < width; x++, p += pixelSize)
                         {
                             //cur_value = rnd2.Next(255);
-                            p[RGB.R] = (byte)buff3[x / 32, y / 32].R;
-                            p[RGB.G] = (byte)buff3[x / 32, y / 32].G;
-                            p[RGB.B] = (byte)buff3[x / 32, y / 32].B;
+                            p[RGB.R] = (byte)buff3[x / Rate, y / Rate].R;
+                            p[RGB.G] = (byte)buff3[x / Rate, y / Rate].G;
+                            p[RGB.B] = (byte)buff3[x / Rate, y / Rate].B;
 
                         }
 

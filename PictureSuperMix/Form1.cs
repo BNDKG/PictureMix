@@ -989,7 +989,6 @@ namespace PictureSuperMix
                     //载入当前帧动画
                     Bitmap Videochange = readerzzz.ReadVideoFrame();
 
-
                     //载入背景
                     Bitmap curbitmap = sourcepic.Clone(new Rectangle(0, 0, (sourcepic.Width / 2) * 2, (sourcepic.Height / 2) * 2), sourcepic.PixelFormat);
 
@@ -1030,28 +1029,52 @@ namespace PictureSuperMix
                             int width2 = img2.Width;
                             int pixelSize2 = (img2.PixelFormat == PixelFormat.Format24bppRgb) ? 3 : 4;
                             byte* p2 = (byte*)img2.ImageData.ToPointer();
+                            int stride = img2.Stride - pixelSize2 * width2;
 
-                            Color[,] buff3 = new Color[width, height];
+
+                            Color[,] buff3 = new Color[width+10, height+10];
                             // 读取视频
-                            for (int y = 0; y < height2; y++)
+                            for (int y = 0; y < height2; y++,p2+= stride)
                             {
                                 // for each pixel
                                 for (int x = 0; x < width2; x++, p2 += pixelSize2)
                                 {
-                                    buff3[x, y] = Color.FromArgb(255, p2[RGB.R], p2[RGB.G], p2[RGB.B]);
+                                    buff3[x+10, y+10] = Color.FromArgb(255, p2[RGB.R], p2[RGB.G], p2[RGB.B]);
 
                                 }
                             }
+                            //if (i == 100)
+                            //{
+                            //    for (int y = 0; y < height; y++)
+                            //    {
+                            //        // for each pixel
+                            //        for (int x = 0; x < width; x++)
+                            //        {
+                            //            if(buff3[x, y].B != 0)
+                            //            {
+                            //                Console.Write(1);
+                            //            }
+                            //            else
+                            //            {
+                            //                Console.Write(0);
+                            //            }
 
+                            //        }
+                            //        Console.Write(Environment.NewLine);
+                            //    }
+                            //}
                             // 插入背景
                             for (int y = 0; y < height; y++)
                             {
                                 // for each pixel
                                 for (int x = 0; x < width; x++, p += pixelSize)
                                 {
-                                    p[RGB.R] = buff3[x, y].R;
-                                    p[RGB.G] = buff3[x, y].G;
-                                    p[RGB.B] = buff3[x, y].B;
+                                    if(buff3[x, y] != null)
+                                    {
+                                        p[RGB.R] = buff3[x, y].R;
+                                        p[RGB.G] = buff3[x, y].G;
+                                        p[RGB.B] = buff3[x, y].B;
+                                    }
 
                                 }
                             }

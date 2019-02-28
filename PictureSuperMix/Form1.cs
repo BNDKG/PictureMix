@@ -960,6 +960,140 @@ namespace PictureSuperMix
 
             //aforgeupleftchange();
         }
+
+        /// <summary>
+        /// 将视频变换到图片对应大小
+        /// </summary>
+        private void aforgeonlychange305()
+        {
+            try
+            {
+                //读取图片
+                Bitmap sourcepic = new Bitmap(Image.FromFile(textBox5.Text));
+
+                // 生成视频生成读取器
+                VideoFileReader readerzzz = new VideoFileReader();
+                // 打开视频
+                readerzzz.Open(textBox6.Text);
+
+                // 生成视频写入器
+                VideoFileWriter writerzzz = new VideoFileWriter();
+                // 新建一个视频(帧必须是二的倍数)
+                writerzzz.Open("sizechanged.mp4", (sourcepic.Width / 2) * 2, (sourcepic.Height / 2) * 2, readerzzz.FrameRate, VideoCodec.MPEG4, 2500000);
+
+
+                // 对视频的所有帧进行操作
+                for (int i = 0; i < (readerzzz.FrameCount - 1) && endflag == false; i++)
+                {
+                    backcounter = (((float)i) / (readerzzz.FrameCount - 1)) * 100;
+
+                    //载入当前帧动画
+                    Bitmap curbitmapsource = readerzzz.ReadVideoFrame();
+
+
+                    //载入背景
+                    Bitmap curbitmap = sourcepic.Clone(new Rectangle(0, 0, (sourcepic.Width / 2) * 2, (sourcepic.Height / 2) * 2), sourcepic.PixelFormat);
+
+                    //标准化
+                    Bitmap Videochangebuf = new Bitmap(curbitmapsource, 1280, 800);
+
+                    //投影变化
+                    Bitmap Videochange = new Bitmap(Videochangebuf, curbitmap.Width, curbitmap.Height);
+
+                    Videochangebuf.Dispose();
+
+
+                    //背景图片
+                    BitmapData curimageData = curbitmap.LockBits(new Rectangle(0, 0, curbitmap.Width, curbitmap.Height),
+                    ImageLockMode.ReadOnly, curbitmap.PixelFormat);
+
+                    //灯光图片
+                    BitmapData curimageData2 = Videochange.LockBits(new Rectangle(0, 0, Videochange.Width, Videochange.Height),
+                    ImageLockMode.ReadOnly, Videochange.PixelFormat);
+
+
+                    unsafe
+                    {
+                        try
+                        {
+                            UnmanagedImage img = new UnmanagedImage(curimageData);
+
+                            int height = img.Height;
+                            int width = img.Width;
+                            int pixelSize = (img.PixelFormat == PixelFormat.Format24bppRgb) ? 3 : 4;
+                            byte* p = (byte*)img.ImageData.ToPointer();
+
+                            UnmanagedImage img2 = new UnmanagedImage(curimageData2);
+
+                            int height2 = img2.Height;
+                            int width2 = img2.Width;
+                            int pixelSize2 = (img2.PixelFormat == PixelFormat.Format24bppRgb) ? 3 : 4;
+                            byte* p2 = (byte*)img2.ImageData.ToPointer();
+
+
+
+
+                            // for each line
+                            for (int y = 0; y < height; y++)
+                            {
+
+                                // for each pixel
+                                for (int x = 0; x < width; x++, p += pixelSize, p2 += pixelSize2)
+                                {
+
+
+                                    p[RGB.R] = p2[RGB.R];
+                                    p[RGB.G] = p2[RGB.G];
+                                    p[RGB.B] = p2[RGB.B];
+
+                                }
+
+                            }
+
+                        }
+                        finally
+                        {
+                            curbitmap.UnlockBits(curimageData); //Unlock
+                            Videochange.UnlockBits(curimageData2);
+                        }
+
+                    }
+
+                    //写入当前帧
+                    writerzzz.WriteVideoFrame(curbitmap);
+
+                    // 释放当前操作内存
+                    curbitmap.Dispose();
+                    curbitmapsource.Dispose();
+                    Videochange.Dispose();
+
+
+                }
+                readerzzz.Close();
+
+                writerzzz.Close();
+                //释放内存
+                sourcepic.Dispose();
+
+            }
+            catch (ArgumentException)
+            {
+                MessageBox.Show(" 请拖入视频文件和图片文件 ");
+                return;
+            }
+            catch (IOException)
+            {
+                MessageBox.Show(" 请拖入 正确 的视频文件和图片文件 ");
+                return;
+            }
+            finally
+            {
+                aforgeupleftchange305();
+                //endflag = true;
+            }
+
+            //aforgeupleftchange();
+        }
         /// <summary>
         /// 适配到左上方
         /// </summary>
@@ -1074,6 +1208,951 @@ namespace PictureSuperMix
                                         p[RGB.R] = buff3[x, y].R;
                                         p[RGB.G] = buff3[x, y].G;
                                         p[RGB.B] = buff3[x, y].B;
+                                    }
+
+                                }
+                            }
+
+                        }
+                        finally
+                        {
+                            curbitmap.UnlockBits(curimageData); //Unlock
+                            Videochange.UnlockBits(curimageData2);
+                        }
+
+                    }
+
+                    //写入当前帧
+                    writerzzz.WriteVideoFrame(curbitmap);
+
+                    // 释放当前操作内存
+                    curbitmap.Dispose();
+                    //curbitmapsource.Dispose();
+                    Videochange.Dispose();
+
+
+                }
+                readerzzz.Close();
+
+                writerzzz.Close();
+                //释放内存
+                sourcepic.Dispose();
+
+            }
+            catch (ArgumentException)
+            {
+                MessageBox.Show(" 请拖入视频文件和图片文件 ");
+                return;
+            }
+            catch (IOException)
+            {
+                MessageBox.Show(" 请拖入 正确 的视频文件和图片文件 ");
+                return;
+            }
+            finally
+            {
+                endflag = true;
+            }
+
+
+        }
+
+        /// <summary>
+        /// 适配到左上方
+        /// </summary>
+        private void aforgeupleftchange305()
+        {
+            try
+            {
+                //读取图片
+                Bitmap sourcepic = new Bitmap(Image.FromFile("1280x800.png"));
+
+                // 生成视频生成读取器
+                VideoFileReader readerzzz = new VideoFileReader();
+                // 打开视频
+                readerzzz.Open("sizechanged.mp4");
+
+                // 生成视频写入器
+                VideoFileWriter writerzzz = new VideoFileWriter();
+                // 新建一个视频(帧必须是二的倍数)
+                writerzzz.Open("testoutput.mp4", (sourcepic.Width / 2) * 2, (sourcepic.Height / 2) * 2, readerzzz.FrameRate, VideoCodec.MPEG4, 2500000);
+
+
+                // 对视频的所有帧进行操作
+                for (int i = 0; i < (readerzzz.FrameCount - 1) && endflag == false; i++)
+                {
+                    backcounter = (((float)i) / (readerzzz.FrameCount - 1)) * 100;
+
+                    //载入当前帧动画
+                    Bitmap Videochange = readerzzz.ReadVideoFrame();
+
+                    //载入背景
+                    Bitmap curbitmap = sourcepic.Clone(new Rectangle(0, 0, (sourcepic.Width / 2) * 2, (sourcepic.Height / 2) * 2), sourcepic.PixelFormat);
+
+                    //标准化
+                    //Bitmap Videochangebuf = new Bitmap(curbitmapsource, 1280, 800);
+
+                    //投影变化
+                    //Bitmap Videochange = new Bitmap(Videochangebuf, curbitmap.Width, curbitmap.Height);
+
+                    //Videochangebuf.Dispose();
+
+
+                    //背景图片
+                    BitmapData curimageData = curbitmap.LockBits(new Rectangle(0, 0, curbitmap.Width, curbitmap.Height),
+                    ImageLockMode.ReadOnly, curbitmap.PixelFormat);
+
+                    //灯光图片
+                    BitmapData curimageData2 = Videochange.LockBits(new Rectangle(0, 0, Videochange.Width, Videochange.Height),
+                    ImageLockMode.ReadOnly, Videochange.PixelFormat);
+
+
+                    unsafe
+                    {
+                        try
+                        {
+                            //背景
+                            UnmanagedImage img = new UnmanagedImage(curimageData);
+
+                            int height = img.Height;
+                            int width = img.Width;
+                            int pixelSize = (img.PixelFormat == PixelFormat.Format24bppRgb) ? 3 : 4;
+                            byte* p = (byte*)img.ImageData.ToPointer();
+
+                            //动效
+                            UnmanagedImage img2 = new UnmanagedImage(curimageData2);
+
+                            int height2 = img2.Height;
+                            int width2 = img2.Width;
+                            int pixelSize2 = (img2.PixelFormat == PixelFormat.Format24bppRgb) ? 3 : 4;
+                            byte* p2 = (byte*)img2.ImageData.ToPointer();
+                            int stride = img2.Stride - pixelSize2 * width2;
+
+
+                            Color[,] buff3 = new Color[width2 , height2];
+                            // 读取视频
+                            for (int y = 0; y < height2; y++, p2 += stride)
+                            {
+                                // for each pixel
+                                for (int x = 0; x < width2; x++, p2 += pixelSize2)
+                                {
+                                    buff3[x, y] = Color.FromArgb(255, p2[RGB.R], p2[RGB.G], p2[RGB.B]);
+
+                                }
+                            }
+                            int kk=0,kkxx=0,kkyy = 0;
+                            Color[,,,] buff4 = new Color[8,12, 16, 16];
+                            for(int y = 0; y < 11; y++)
+                            {
+                                for(int x = 0; x < 8; x++)
+                                {
+                                    kkyy = kk / 8;
+                                    kkxx = kk % 8;
+
+                                    for(int yy = 0; yy < 16; yy++)
+                                    {
+                                        for(int xx = 0; xx < 16; xx++)
+                                        {
+                                            buff4[kkxx,kkyy, xx, yy] = buff3[x*16+xx, y * 16 + yy];
+                                        }
+                                    }
+                                    kk++;
+                                }
+                            }
+
+
+                            Color[,,,] buff6 = new Color[8, 12, 16, 16];
+
+                            int yyy = 0;
+                            int xxx = 0;
+
+                            for( yyy = 0; yyy < 4; yyy++)
+                            {
+                                for( xxx = 0; xxx < 2; xxx++)
+                                {
+                                    for (int yy = 0; yy < 16; yy++)
+                                    {
+                                        for (int xx = 0; xx < 16; xx++)
+                                        {
+                                            buff6[yyy, xxx, xx, yy] = buff4[xxx, yyy, xx, yy];
+                                        }
+                                    }
+                                }
+                            }
+                            //===============1~8=================
+
+                            for (int yy = 0; yy < 16; yy++)
+                            {
+                                for (int xx = 0; xx < 16; xx++)
+                                {
+                                    buff6[4, 0, xx, yy] = buff4[2, 0, xx, yy];
+                                }
+                            }
+                            for (int yy = 0; yy < 16; yy++)
+                            {
+                                for (int xx = 0; xx < 16; xx++)
+                                {
+                                    buff6[4, 1, xx, yy] = buff4[3, 0, xx, yy];
+                                }
+                            }
+
+                            for (int yy = 0; yy < 16; yy++)
+                            {
+                                for (int xx = 0; xx < 16; xx++)
+                                {
+                                    buff6[0, 2, xx, yy] = buff4[4, 0, xx, yy];
+                                }
+                            }
+                            for (int yy = 0; yy < 16; yy++)
+                            {
+                                for (int xx = 0; xx < 16; xx++)
+                                {
+                                    buff6[0, 3, xx, yy] = buff4[5, 0, xx, yy];
+                                }
+                            }
+
+                            for (int yy = 0; yy < 16; yy++)
+                            {
+                                for (int xx = 0; xx < 16; xx++)
+                                {
+                                    buff6[4, 2, xx, yy] = buff4[6, 0, xx, yy];
+                                }
+                            }
+                            for (int yy = 0; yy < 16; yy++)
+                            {
+                                for (int xx = 0; xx < 16; xx++)
+                                {
+                                    buff6[4, 3, xx, yy] = buff4[7, 0, xx, yy];
+                                }
+                            }
+                            //=============9~16======================================
+
+                            for (int yy = 0; yy < 16; yy++)
+                            {
+                                for (int xx = 0; xx < 16; xx++)
+                                {
+                                    buff6[5, 0, xx, yy] = buff4[2, 1, xx, yy];
+                                }
+                            }
+                            for (int yy = 0; yy < 16; yy++)
+                            {
+                                for (int xx = 0; xx < 16; xx++)
+                                {
+                                    buff6[5, 1, xx, yy] = buff4[3, 1, xx, yy];
+                                }
+                            }
+
+                            for (int yy = 0; yy < 16; yy++)
+                            {
+                                for (int xx = 0; xx < 16; xx++)
+                                {
+                                    buff6[1, 2, xx, yy] = buff4[4, 1, xx, yy];
+                                }
+                            }
+                            for (int yy = 0; yy < 16; yy++)
+                            {
+                                for (int xx = 0; xx < 16; xx++)
+                                {
+                                    buff6[1, 3, xx, yy] = buff4[5, 1, xx, yy];
+                                }
+                            }
+
+                            for (int yy = 0; yy < 16; yy++)
+                            {
+                                for (int xx = 0; xx < 16; xx++)
+                                {
+                                    buff6[5, 2, xx, yy] = buff4[6, 1, xx, yy];
+                                }
+                            }
+                            for (int yy = 0; yy < 16; yy++)
+                            {
+                                for (int xx = 0; xx < 16; xx++)
+                                {
+                                    buff6[5, 3, xx, yy] = buff4[7, 1, xx, yy];
+                                }
+                            }
+
+                            //=============17~24======================================
+                            for (int yy = 0; yy < 16; yy++)
+                            {
+                                for (int xx = 0; xx < 16; xx++)
+                                {
+                                    buff6[6, 0, xx, yy] = buff4[2, 2, xx, yy];
+                                }
+                            }
+                            for (int yy = 0; yy < 16; yy++)
+                            {
+                                for (int xx = 0; xx < 16; xx++)
+                                {
+                                    buff6[6, 1, xx, yy] = buff4[3, 2, xx, yy];
+                                }
+                            }
+
+                            for (int yy = 0; yy < 16; yy++)
+                            {
+                                for (int xx = 0; xx < 16; xx++)
+                                {
+                                    buff6[2, 2, xx, yy] = buff4[4, 2, xx, yy];
+                                }
+                            }
+                            for (int yy = 0; yy < 16; yy++)
+                            {
+                                for (int xx = 0; xx < 16; xx++)
+                                {
+                                    buff6[2, 3, xx, yy] = buff4[5, 2, xx, yy];
+                                }
+                            }
+
+                            for (int yy = 0; yy < 16; yy++)
+                            {
+                                for (int xx = 0; xx < 16; xx++)
+                                {
+                                    buff6[6, 2, xx, yy] = buff4[6, 2, xx, yy];
+                                }
+                            }
+                            for (int yy = 0; yy < 16; yy++)
+                            {
+                                for (int xx = 0; xx < 16; xx++)
+                                {
+                                    buff6[6, 3, xx, yy] = buff4[7, 2, xx, yy];
+                                }
+                            }
+                            //=============25~32======================================
+                            for (int yy = 0; yy < 16; yy++)
+                            {
+                                for (int xx = 0; xx < 16; xx++)
+                                {
+                                    buff6[7, 0, xx, yy] = buff4[2, 3, xx, yy];
+                                }
+                            }
+                            for (int yy = 0; yy < 16; yy++)
+                            {
+                                for (int xx = 0; xx < 16; xx++)
+                                {
+                                    buff6[7, 1, xx, yy] = buff4[3, 3, xx, yy];
+                                }
+                            }
+
+                            for (int yy = 0; yy < 16; yy++)
+                            {
+                                for (int xx = 0; xx < 16; xx++)
+                                {
+                                    buff6[3, 2, xx, yy] = buff4[4, 3, xx, yy];
+                                }
+                            }
+                            for (int yy = 0; yy < 16; yy++)
+                            {
+                                for (int xx = 0; xx < 16; xx++)
+                                {
+                                    buff6[3, 3, xx, yy] = buff4[5, 3, xx, yy];
+                                }
+                            }
+
+                            for (int yy = 0; yy < 16; yy++)
+                            {
+                                for (int xx = 0; xx < 16; xx++)
+                                {
+                                    buff6[7, 2, xx, yy] = buff4[6, 3, xx, yy];
+                                }
+                            }
+                            for (int yy = 0; yy < 16; yy++)
+                            {
+                                for (int xx = 0; xx < 16; xx++)
+                                {
+                                    buff6[7, 3, xx, yy] = buff4[7, 3, xx, yy];
+                                }
+                            }
+
+
+
+                            for (yyy = 4; yyy < 8; yyy++)
+                            {
+                                for (xxx = 6; xxx < 8; xxx++)
+                                {
+                                    for (int yy = 0; yy < 16; yy++)
+                                    {
+                                        for (int xx = 0; xx < 16; xx++)
+                                        {
+                                            buff6[yyy, xxx, xx, yy] = buff4[xxx, yyy, xx, yy];
+                                        }
+                                    }
+                                }
+                            }
+
+                            //=============33~40======================================
+                            for (int yy = 0; yy < 16; yy++)
+                            {
+                                for (int xx = 0; xx < 16; xx++)
+                                {
+                                    buff6[0, 4, xx, yy] = buff4[0, 4, xx, yy];
+                                }
+                            }
+                            for (int yy = 0; yy < 16; yy++)
+                            {
+                                for (int xx = 0; xx < 16; xx++)
+                                {
+                                    buff6[0, 5, xx, yy] = buff4[1, 4, xx, yy];
+                                }
+                            }
+
+                            for (int yy = 0; yy < 16; yy++)
+                            {
+                                for (int xx = 0; xx < 16; xx++)
+                                {
+                                    buff6[4, 4, xx, yy] = buff4[2, 4, xx, yy];
+                                }
+                            }
+                            for (int yy = 0; yy < 16; yy++)
+                            {
+                                for (int xx = 0; xx < 16; xx++)
+                                {
+                                    buff6[4, 5, xx, yy] = buff4[3, 4, xx, yy];
+                                }
+                            }
+
+                            for (int yy = 0; yy < 16; yy++)
+                            {
+                                for (int xx = 0; xx < 16; xx++)
+                                {
+                                    buff6[0, 6, xx, yy] = buff4[4, 4, xx, yy];
+                                }
+                            }
+                            for (int yy = 0; yy < 16; yy++)
+                            {
+                                for (int xx = 0; xx < 16; xx++)
+                                {
+                                    buff6[0, 7, xx, yy] = buff4[5, 4, xx, yy];
+                                }
+                            }
+                            //=============41~48======================================
+                            for (int yy = 0; yy < 16; yy++)
+                            {
+                                for (int xx = 0; xx < 16; xx++)
+                                {
+                                    buff6[1, 4, xx, yy] = buff4[0, 5, xx, yy];
+                                }
+                            }
+                            for (int yy = 0; yy < 16; yy++)
+                            {
+                                for (int xx = 0; xx < 16; xx++)
+                                {
+                                    buff6[1, 5, xx, yy] = buff4[1, 5, xx, yy];
+                                }
+                            }
+
+                            for (int yy = 0; yy < 16; yy++)
+                            {
+                                for (int xx = 0; xx < 16; xx++)
+                                {
+                                    buff6[5, 4, xx, yy] = buff4[2, 5, xx, yy];
+                                }
+                            }
+                            for (int yy = 0; yy < 16; yy++)
+                            {
+                                for (int xx = 0; xx < 16; xx++)
+                                {
+                                    buff6[5, 5, xx, yy] = buff4[3, 5, xx, yy];
+                                }
+                            }
+
+                            for (int yy = 0; yy < 16; yy++)
+                            {
+                                for (int xx = 0; xx < 16; xx++)
+                                {
+                                    buff6[1, 6, xx, yy] = buff4[4, 5, xx, yy];
+                                }
+                            }
+                            for (int yy = 0; yy < 16; yy++)
+                            {
+                                for (int xx = 0; xx < 16; xx++)
+                                {
+                                    buff6[1, 7, xx, yy] = buff4[5, 5, xx, yy];
+                                }
+                            }
+                            //=============49~56======================================
+                            for (int yy = 0; yy < 16; yy++)
+                            {
+                                for (int xx = 0; xx < 16; xx++)
+                                {
+                                    buff6[2, 4, xx, yy] = buff4[0, 6, xx, yy];
+                                }
+                            }
+                            for (int yy = 0; yy < 16; yy++)
+                            {
+                                for (int xx = 0; xx < 16; xx++)
+                                {
+                                    buff6[2, 5, xx, yy] = buff4[1, 6, xx, yy];
+                                }
+                            }
+
+                            for (int yy = 0; yy < 16; yy++)
+                            {
+                                for (int xx = 0; xx < 16; xx++)
+                                {
+                                    buff6[6, 4, xx, yy] = buff4[2, 6, xx, yy];
+                                }
+                            }
+                            for (int yy = 0; yy < 16; yy++)
+                            {
+                                for (int xx = 0; xx < 16; xx++)
+                                {
+                                    buff6[6, 5, xx, yy] = buff4[3, 6, xx, yy];
+                                }
+                            }
+
+                            for (int yy = 0; yy < 16; yy++)
+                            {
+                                for (int xx = 0; xx < 16; xx++)
+                                {
+                                    buff6[2, 6, xx, yy] = buff4[4, 6, xx, yy];
+                                }
+                            }
+                            for (int yy = 0; yy < 16; yy++)
+                            {
+                                for (int xx = 0; xx < 16; xx++)
+                                {
+                                    buff6[2, 7, xx, yy] = buff4[5, 6, xx, yy];
+                                }
+                            }
+                            //=============57~64======================================
+                            for (int yy = 0; yy < 16; yy++)
+                            {
+                                for (int xx = 0; xx < 16; xx++)
+                                {
+                                    buff6[3, 4, xx, yy] = buff4[0, 7, xx, yy];
+                                }
+                            }
+                            for (int yy = 0; yy < 16; yy++)
+                            {
+                                for (int xx = 0; xx < 16; xx++)
+                                {
+                                    buff6[3, 5, xx, yy] = buff4[1, 7, xx, yy];
+                                }
+                            }
+
+                            for (int yy = 0; yy < 16; yy++)
+                            {
+                                for (int xx = 0; xx < 16; xx++)
+                                {
+                                    buff6[7, 4, xx, yy] = buff4[2, 7, xx, yy];
+                                }
+                            }
+                            for (int yy = 0; yy < 16; yy++)
+                            {
+                                for (int xx = 0; xx < 16; xx++)
+                                {
+                                    buff6[7, 5, xx, yy] = buff4[3, 7, xx, yy];
+                                }
+                            }
+
+                            for (int yy = 0; yy < 16; yy++)
+                            {
+                                for (int xx = 0; xx < 16; xx++)
+                                {
+                                    buff6[3, 6, xx, yy] = buff4[4, 7, xx, yy];
+                                }
+                            }
+                            for (int yy = 0; yy < 16; yy++)
+                            {
+                                for (int xx = 0; xx < 16; xx++)
+                                {
+                                    buff6[3, 7, xx, yy] = buff4[5, 7, xx, yy];
+                                }
+                            }
+                            //后面剩下的三行
+
+                            //for (yyy = 8; yyy < 12; yyy++)
+                            //{
+                            //    for (xxx = 0; xxx < 8; xxx++)
+                            //    {
+                            //        for (int yy = 0; yy < 16; yy++)
+                            //        {
+                            //            for (int xx = 0; xx < 16; xx++)
+                            //            {
+                            //                buff6[xxx, yyy, xx, yy] = buff4[xxx, yyy, xx, yy];
+                            //            }
+                            //        }
+                            //    }
+                            //}
+                            //for(int ki = 0; ki < 4; ki++)
+                            //{
+                            //    for (int yy = 0; yy < 16; yy++)
+                            //    {
+                            //        for (int xx = 0; xx < 16; xx++)
+                            //        {
+                            //            buff6[0, 8+ki, xx, yy] = buff4[ki, 8, xx, yy];
+                            //        }
+                            //    }
+                            //}
+                            //for (int ki = 0; ki < 4; ki++)
+                            //{
+                            //    for (int yy = 0; yy < 16; yy++)
+                            //    {
+                            //        for (int xx = 0; xx < 16; xx++)
+                            //        {
+                            //            buff6[2, 8 + ki, xx, yy] = buff4[4+ki, 8, xx, yy];
+                            //        }
+                            //    }
+                            //}
+                            //for (int ki = 0; ki < 4; ki++)
+                            //{
+                            //    for (int yy = 0; yy < 16; yy++)
+                            //    {
+                            //        for (int xx = 0; xx < 16; xx++)
+                            //        {
+                            //            buff6[1, 8 + ki, xx, yy] = buff4[ki, 9, xx, yy];
+                            //        }
+                            //    }
+                            //}
+                            //for (int ki = 0; ki < 4; ki++)
+                            //{
+                            //    for (int yy = 0; yy < 16; yy++)
+                            //    {
+                            //        for (int xx = 0; xx < 16; xx++)
+                            //        {
+                            //            buff6[3, 8 + ki, xx, yy] = buff4[4 + ki, 9, xx, yy];
+                            //        }
+                            //    }
+                            //}
+
+                            //for (int ki = 0; ki < 4; ki++)
+                            //{
+                            //    for (int yy = 0; yy < 16; yy++)
+                            //    {
+                            //        for (int xx = 0; xx < 16; xx++)
+                            //        {
+                            //            buff6[0, 8 + ki, xx, yy] = buff4[ki, 10, xx, yy];
+                            //        }
+                            //    }
+                            //}
+                            //for (int ki = 0; ki < 4; ki++)
+                            //{
+                            //    for (int yy = 0; yy < 16; yy++)
+                            //    {
+                            //        for (int xx = 0; xx < 16; xx++)
+                            //        {
+                            //            buff6[2, 8 + ki, xx, yy] = buff4[4 + ki, 10, xx, yy];
+                            //        }
+                            //    }
+                            //}
+                            //=======================65~72======================
+
+                            for (int yy = 0; yy < 16; yy++)
+                            {
+                                for (int xx = 0; xx < 16; xx++)
+                                {
+                                    buff6[0, 8, xx, yy] = buff4[0, 8, xx, yy];
+                                }
+                            }
+                            for (int yy = 0; yy < 16; yy++)
+                            {
+                                for (int xx = 0; xx < 16; xx++)
+                                {
+                                    buff6[0, 9, xx, yy] = buff4[1, 8, xx, yy];
+                                }
+                            }
+
+                            for (int yy = 0; yy < 16; yy++)
+                            {
+                                for (int xx = 0; xx < 16; xx++)
+                                {
+                                    buff6[4, 8, xx, yy] = buff4[2, 8, xx, yy];
+                                }
+                            }
+                            for (int yy = 0; yy < 16; yy++)
+                            {
+                                for (int xx = 0; xx < 16; xx++)
+                                {
+                                    buff6[4, 9, xx, yy] = buff4[3, 8, xx, yy];
+                                }
+                            }
+
+                            for (int yy = 0; yy < 16; yy++)
+                            {
+                                for (int xx = 0; xx < 16; xx++)
+                                {
+                                    buff6[0, 10, xx, yy] = buff4[4, 8, xx, yy];
+                                }
+                            }
+                            for (int yy = 0; yy < 16; yy++)
+                            {
+                                for (int xx = 0; xx < 16; xx++)
+                                {
+                                    buff6[0, 11, xx, yy] = buff4[5, 8, xx, yy];
+                                }
+                            }
+
+                            for (int yy = 0; yy < 16; yy++)
+                            {
+                                for (int xx = 0; xx < 16; xx++)
+                                {
+                                    buff6[4, 10, xx, yy] = buff4[6, 8, xx, yy];
+                                }
+                            }
+                            for (int yy = 0; yy < 16; yy++)
+                            {
+                                for (int xx = 0; xx < 16; xx++)
+                                {
+                                    buff6[4, 11, xx, yy] = buff4[7, 8, xx, yy];
+                                }
+                            }
+
+                            //=======================73~80======================
+
+                            for (int yy = 0; yy < 16; yy++)
+                            {
+                                for (int xx = 0; xx < 16; xx++)
+                                {
+                                    buff6[1, 8, xx, yy] = buff4[0, 9, xx, yy];
+                                }
+                            }
+                            for (int yy = 0; yy < 16; yy++)
+                            {
+                                for (int xx = 0; xx < 16; xx++)
+                                {
+                                    buff6[1, 9, xx, yy] = buff4[1, 9, xx, yy];
+                                }
+                            }
+
+                            for (int yy = 0; yy < 16; yy++)
+                            {
+                                for (int xx = 0; xx < 16; xx++)
+                                {
+                                    buff6[5, 8, xx, yy] = buff4[2, 9, xx, yy];
+                                }
+                            }
+                            for (int yy = 0; yy < 16; yy++)
+                            {
+                                for (int xx = 0; xx < 16; xx++)
+                                {
+                                    buff6[5, 9, xx, yy] = buff4[3, 9, xx, yy];
+                                }
+                            }
+
+                            for (int yy = 0; yy < 16; yy++)
+                            {
+                                for (int xx = 0; xx < 16; xx++)
+                                {
+                                    buff6[1, 10, xx, yy] = buff4[4, 9, xx, yy];
+                                }
+                            }
+                            for (int yy = 0; yy < 16; yy++)
+                            {
+                                for (int xx = 0; xx < 16; xx++)
+                                {
+                                    buff6[1, 11, xx, yy] = buff4[5, 9, xx, yy];
+                                }
+                            }
+
+                            for (int yy = 0; yy < 16; yy++)
+                            {
+                                for (int xx = 0; xx < 16; xx++)
+                                {
+                                    buff6[5, 10, xx, yy] = buff4[6, 9, xx, yy];
+                                }
+                            }
+                            for (int yy = 0; yy < 16; yy++)
+                            {
+                                for (int xx = 0; xx < 16; xx++)
+                                {
+                                    buff6[5, 11, xx, yy] = buff4[7, 9, xx, yy];
+                                }
+                            }
+
+                            //=======================81~88======================
+
+                            for (int yy = 0; yy < 16; yy++)
+                            {
+                                for (int xx = 0; xx < 16; xx++)
+                                {
+                                    buff6[2, 8, xx, yy] = buff4[0, 10, xx, yy];
+                                }
+                            }
+                            for (int yy = 0; yy < 16; yy++)
+                            {
+                                for (int xx = 0; xx < 16; xx++)
+                                {
+                                    buff6[2, 9, xx, yy] = buff4[1, 10, xx, yy];
+                                }
+                            }
+
+                            for (int yy = 0; yy < 16; yy++)
+                            {
+                                for (int xx = 0; xx < 16; xx++)
+                                {
+                                    buff6[6, 8, xx, yy] = buff4[2, 10, xx, yy];
+                                }
+                            }
+                            for (int yy = 0; yy < 16; yy++)
+                            {
+                                for (int xx = 0; xx < 16; xx++)
+                                {
+                                    buff6[6, 9, xx, yy] = buff4[3, 10, xx, yy];
+                                }
+                            }
+
+                            for (int yy = 0; yy < 16; yy++)
+                            {
+                                for (int xx = 0; xx < 16; xx++)
+                                {
+                                    buff6[2, 10, xx, yy] = buff4[4, 10, xx, yy];
+                                }
+                            }
+                            for (int yy = 0; yy < 16; yy++)
+                            {
+                                for (int xx = 0; xx < 16; xx++)
+                                {
+                                    buff6[2, 11, xx, yy] = buff4[5, 10, xx, yy];
+                                }
+                            }
+
+                            for (int yy = 0; yy < 16; yy++)
+                            {
+                                for (int xx = 0; xx < 16; xx++)
+                                {
+                                    buff6[6, 10, xx, yy] = buff4[6, 10, xx, yy];
+                                }
+                            }
+                            for (int yy = 0; yy < 16; yy++)
+                            {
+                                for (int xx = 0; xx < 16; xx++)
+                                {
+                                    buff6[6, 11, xx, yy] = buff4[7, 10, xx, yy];
+                                }
+                            }
+
+                            ////=======================89~96======================
+
+                            //for (int yy = 0; yy < 16; yy++)
+                            //{
+                            //    for (int xx = 0; xx < 16; xx++)
+                            //    {
+                            //        buff6[3, 8, xx, yy] = buff4[0, 11, xx, yy];
+                            //    }
+                            //}
+                            //for (int yy = 0; yy < 16; yy++)
+                            //{
+                            //    for (int xx = 0; xx < 16; xx++)
+                            //    {
+                            //        buff6[3, 9, xx, yy] = buff4[1, 11, xx, yy];
+                            //    }
+                            //}
+
+                            //for (int yy = 0; yy < 16; yy++)
+                            //{
+                            //    for (int xx = 0; xx < 16; xx++)
+                            //    {
+                            //        buff6[7, 8, xx, yy] = buff4[2, 11, xx, yy];
+                            //    }
+                            //}
+                            //for (int yy = 0; yy < 16; yy++)
+                            //{
+                            //    for (int xx = 0; xx < 16; xx++)
+                            //    {
+                            //        buff6[7, 9, xx, yy] = buff4[3, 11, xx, yy];
+                            //    }
+                            //}
+
+                            //for (int yy = 0; yy < 16; yy++)
+                            //{
+                            //    for (int xx = 0; xx < 16; xx++)
+                            //    {
+                            //        buff6[3, 10, xx, yy] = buff4[4, 11, xx, yy];
+                            //    }
+                            //}
+                            //for (int yy = 0; yy < 16; yy++)
+                            //{
+                            //    for (int xx = 0; xx < 16; xx++)
+                            //    {
+                            //        buff6[3, 11, xx, yy] = buff4[5, 11, xx, yy];
+                            //    }
+                            //}
+
+                            //for (int yy = 0; yy < 16; yy++)
+                            //{
+                            //    for (int xx = 0; xx < 16; xx++)
+                            //    {
+                            //        buff6[7, 10, xx, yy] = buff4[6, 11, xx, yy];
+                            //    }
+                            //}
+                            //for (int yy = 0; yy < 16; yy++)
+                            //{
+                            //    for (int xx = 0; xx < 16; xx++)
+                            //    {
+                            //        buff6[7, 11, xx, yy] = buff4[7, 11, xx, yy];
+                            //    }
+                            //}
+
+
+                            kk = 0;
+                            kkxx = 0;
+                            kkyy = 0;
+
+                            Color[,] buff5 = new Color[width, height];
+                            for (int y = 0; y < 12; y++)
+                            {
+                                for (int x = 0; x < 8; x++)
+                                {
+                                    kkyy = kk / 8;
+                                    kkxx = kk % 8;
+
+                                    for (int yy = 0; yy < 16; yy++)
+                                    {
+                                        for (int xx = 0; xx < 16; xx++)
+                                        {
+                                            buff5[y * 16 + xx, x * 16 + yy] = buff6[kkxx, kkyy, xx, yy];
+                                        }
+                                    }
+                                    kk++;
+                                }
+                            }
+
+
+
+
+                            //
+                            //for (int y = 0; y < height; y++)
+                            //{
+                            //    for (int x = 0; x < width; x++)
+                            //    {
+                            //        int calk = x / 16 + y / 2;
+                            //        buff5[x, y] = buff4[calk, y, x];
+                            //    }
+                            //}
+
+
+
+                            //if (i == 100)
+                            //{
+                            //    for (int y = 0; y < height; y++)
+                            //    {
+                            //        // for each pixel
+                            //        for (int x = 0; x < width; x++)
+                            //        {
+                            //            if(buff3[x, y].B != 0)
+                            //            {
+                            //                Console.Write(1);
+                            //            }
+                            //            else
+                            //            {
+                            //                Console.Write(0);
+                            //            }
+
+                            //        }
+                            //        Console.Write(Environment.NewLine);
+                            //    }
+                            //}
+                            // 插入背景
+                            for (int y = 0; y < height; y++)
+                            {
+                                // for each pixel
+                                for (int x = 0; x < width; x++, p += pixelSize)
+                                {
+                                    if (buff5[x, y] != null)
+                                    {
+                                        p[RGB.R] = buff5[x, y].R;
+                                        p[RGB.G] = buff5[x, y].G;
+                                        p[RGB.B] = buff5[x, y].B;
                                     }
 
                                 }
@@ -2109,6 +3188,30 @@ namespace PictureSuperMix
 
 
 
+        }
+
+        private void button7_Click(object sender, EventArgs e)
+        {
+            if (endflag)
+            {
+                if (radioButton1.Checked == false && radioButton2.Checked == false)
+                {
+                    return;
+                }
+
+                endflag = false;
+
+                timer1.Start();
+                Thread oGetArgThread = new Thread(new ThreadStart(aforgeonlychange305));
+                oGetArgThread.IsBackground = true;
+                oGetArgThread.Start();
+                button8.Text = "停止";
+            }
+            else
+            {
+                endflag = true;
+                button8.Text = "视频合成";
+            }
         }
     }
 }
